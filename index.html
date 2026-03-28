@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alfred AI — Business Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+  --bg:            #010c1e;
+  --bg-2:          #031629;
+  --bg-card:       #061c33;
+  --bg-card-2:     #0a2240;
+  --bg-input:      #040f20;
+  --border:        rgba(91,155,240,0.10);
+  --border-md:     rgba(91,155,240,0.18);
+  --border-hi:     rgba(91,155,240,0.30);
+  --accent:        #4d8fff;
+  --accent-2:      #7ab3ff;
+  --accent-dim:    rgba(77,143,255,0.14);
+  --accent-glow:   rgba(77,143,255,0.07);
+  --grad-a:        #1a4fd6;
+  --grad-b:        #3b82f6;
+  --grad-c:        #7db9ff;
+  --text-1:        #ddeeff;
+  --text-2:        #6690b8;
+  --text-3:        #2a4a6e;
+  --green:         #3ecf8e;
+  --green-dim:     rgba(62,207,142,0.12);
+  --amber:         #f5a623;
+  --amber-dim:     rgba(245,166,35,0.12);
+  --red:           #ff5a5a;
+  --red-dim:       rgba(255,90,90,0.12);
+  --high:          #ff6b6b;
+  --high-dim:      rgba(255,107,107,0.12);
+  --medium:        #f5a623;
+  --medium-dim:    rgba(245,166,35,0.12);
+  --low:           #3ecf8e;
+  --low-dim:       rgba(62,207,142,0.12);
+  --font-display:  'Syne', sans-serif;
+  --font-body:     'Instrument Sans', sans-serif;
+  --font-mono:     'DM Mono', monospace;
+  --radius:        8px;
+  --radius-lg:     12px;
+  --radius-xl:     16px;
+  --transition:    0.18s cubic-bezier(0.4,0,0.2,1);
+}
+ 
+html { scroll-behavior: smooth; }
+ 
+body {
+  background: linear-gradient(155deg,
+    #010c1e 0%,
+    #031729 25%,
+    #052240 50%,
+    #082a50 75%,
+    #0a2f5a 100%
+  );
+  background-attachment: fixed;
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+ 
+/* SUBTLE GRID TEXTURE */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(91,155,240,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(91,155,240,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+ 
+/* TOP GLOW */
+body::after {
+  content: '';
+  position: fixed;
+  top: -180px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 400px;
+  background: radial-gradient(ellipse at center,
+    rgba(59,130,246,0.18) 0%,
+    rgba(29,78,216,0.08) 45%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+ 
+.app { position: relative; z-index: 1; }
+ 
+/* NAV */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 72px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(1,12,30,0.75);
+  backdrop-filter: blur(24px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+ 
+.nav-logo {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  background: linear-gradient(105deg, #ffffff 0%, var(--grad-c) 60%, var(--grad-b) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+ 
+.nav-right { display: flex; align-items: center; gap: 12px; }
+ 
+.nav-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-md);
+  color: var(--text-2);
+  letter-spacing: 0.5px;
+}
+ 
+.btn-demo {
+  height: 34px;
+  padding: 0 18px;
+  background: linear-gradient(105deg, var(--grad-a) 0%, var(--grad-b) 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  box-shadow: 0 2px 16px rgba(59,130,246,0.30);
+}
+ 
+.btn-demo:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 22px rgba(59,130,246,0.40); }
+.btn-demo:active { transform: translateY(0); }
+ 
+/* MAIN LAYOUT */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+ 
+/* PAGE HEADER */
+.page-header {
+  margin-bottom: 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+ 
+.page-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+ 
+.page-sub {
+  font-size: 14px;
+  color: var(--text-2);
+  margin-top: 6px;
+}
+ 
+.header-actions { display: flex; gap: 10px; }
+ 
+/* ─── STRATEGY SELECTOR ─── */
+.strategy-section {
+  margin-bottom: 36px;
+}
+ 
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+ 
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+ 
+.strategy-btn {
+  position: relative;
+  padding: 18px 16px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  overflow: hidden;
+}
+ 
+.strategy-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(140deg, rgba(77,143,255,0.14) 0%, rgba(59,130,246,0.06) 50%, transparent 100%);
+  transition: var(--transition);
+}
+ 
+.strategy-btn:hover {
+  border-color: var(--border-md);
+  background: var(--bg-card-2);
+  transform: translateY(-1px);
+}
+ 
+.strategy-btn.active {
+  border-color: rgba(77,143,255,0.55);
+  background: var(--bg-card-2);
+  box-shadow: 0 0 0 1px rgba(77,143,255,0.12) inset,
+              0 4px 24px rgba(29,78,216,0.18);
+}
+ 
+.strategy-btn.active::before { opacity: 1; }
+ 
+.strategy-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--text-3);
+  margin-bottom: 12px;
+  transition: var(--transition);
+}
+ 
+.strategy-btn.active .strategy-indicator {
+  background: linear-gradient(135deg, var(--grad-b), var(--grad-c));
+  box-shadow: 0 0 8px rgba(77,143,255,0.5);
+}
+ 
+.strategy-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 4px;
+  letter-spacing: -0.2px;
+}
+ 
+.strategy-desc {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+ 
+.strategy-active-label {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 3px 7px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: var(--transition);
+}
+ 
+.strategy-btn.active .strategy-active-label { opacity: 1; }
+ 
+/* ─── KPI CARDS ─── */
+.kpi-section { margin-bottom: 40px; }
+ 
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+ 
+.kpi-card {
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+ 
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--grad-b) 0%, var(--grad-c) 100%);
+  opacity: 0.5;
+  border-radius: 3px 0 0 3px;
+  transition: var(--transition);
+}
+ 
+.kpi-card:hover { border-color: var(--border-md); }
+.kpi-card:hover::after { opacity: 1; }
+ 
+.kpi-label {
+  font-size: 11px;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+}
+ 
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+ 
+.kpi-delta {
+  font-size: 12px;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+ 
+.delta-up { color: var(--green); }
+.delta-down { color: var(--red); }
+.delta-arrow { font-size: 10px; }
+ 
+/* ─── DATA INPUT ─── */
+.data-section { margin-bottom: 40px; }
+ 
+.data-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+ 
+.data-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+ 
+.data-tab {
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: var(--transition);
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: var(--font-body);
+}
+ 
+.data-tab:hover { color: var(--text-1); }
+.data-tab.active {
+  color: var(--text-1);
+  border-bottom-color: var(--grad-b);
+  background: linear-gradient(180deg, transparent, rgba(59,130,246,0.04));
+}
+ 
+.tab-pane { display: none; padding: 24px; }
+.tab-pane.active { display: block; }
+ 
+/* METRIC INPUTS */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+ 
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+ 
+.input-label {
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  letter-spacing: 0.3px;
+}
+ 
+.input-field {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
+  transition: var(--transition);
+  outline: none;
+}
+ 
+.input-field:focus { border-color: var(--grad-b); background: rgba(59,130,246,0.05); }
+.input-field::placeholder { color: var(--text-3); }
+ 
+/* PRODUCT TABLE */
+.product-section { margin-top: 20px; }
+ 
+.product-section-title {
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+  letter-spacing: 0.3px;
+  margin-bottom: 12px;
+}
+ 
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+ 
+.product-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--text-3);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+ 
+.product-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-1);
+}
+ 
+.product-table tr:last-child td { border-bottom: none; }
+.product-table td input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  width: 100%;
+}
+ 
+.product-table td input:focus { color: var(--accent); }
+ 
+.add-product-btn {
+  margin-top: 12px;
+  background: none;
+  border: 1px dashed var(--border-md);
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-size: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+ 
+.add-product-btn:hover { border-color: var(--accent); color: var(--accent); }
+ 
+/* JSON TEXTAREA */
+.json-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-1);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 16px;
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  transition: var(--transition);
+  outline: none;
+  line-height: 1.7;
+}
+ 
+.json-input:focus { border-color: var(--accent); }
+ 
+/* CSV UPLOAD */
+.upload-zone {
+  border: 1px dashed var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+ 
+.upload-zone:hover { border-color: var(--grad-b); background: rgba(59,130,246,0.06); }
+ 
+.upload-zone.drag-over { border-color: var(--grad-b); background: rgba(59,130,246,0.12); }
+ 
+.upload-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 16px;
+  border: 1px solid var(--border-md);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.upload-title { font-size: 14px; color: var(--text-1); margin-bottom: 6px; }
+.upload-sub { font-size: 12px; color: var(--text-2); }
+ 
+.data-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+ 
+.btn-secondary {
+  height: 36px;
+  padding: 0 16px;
+  background: none;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius);
+  color: var(--text-2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+ 
+.btn-secondary:hover { border-color: var(--border-hi); color: var(--text-1); }
+ 
+.btn-primary {
+  height: 36px;
+  padding: 0 20px;
+  background: linear-gradient(105deg, var(--grad-a) 0%, var(--grad-b) 100%);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 14px rgba(59,130,246,0.28);
+}
+ 
+.btn-primary:hover { opacity: 0.88; box-shadow: 0 4px 20px rgba(59,130,246,0.40); }
+.btn-primary:disabled { background: var(--bg-card-2); color: var(--text-3); cursor: not-allowed; box-shadow: none; }
+ 
+/* ─── RECOMMENDATIONS ─── */
+.recs-section { }
+ 
+.recs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+ 
+.recs-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+}
+ 
+.recs-meta {
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--font-mono);
+}
+ 
+.recs-empty {
+  padding: 80px 24px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+ 
+.recs-empty-title {
+  font-size: 16px;
+  color: var(--text-2);
+  margin-bottom: 8px;
+  font-family: var(--font-display);
+}
+ 
+.recs-empty-sub { font-size: 13px; color: var(--text-3); }
+ 
+.recs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+ 
+/* RECOMMENDATION CARD */
+.rec-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: fadeSlideUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
+}
+ 
+.rec-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+ 
+.rec-card.impact-high::before { background: linear-gradient(90deg, transparent, var(--high), transparent); }
+.rec-card.impact-medium::before { background: linear-gradient(90deg, transparent, var(--medium), transparent); }
+.rec-card.impact-low::before { background: linear-gradient(90deg, transparent, var(--low), transparent); }
+ 
+.rec-card:hover {
+  border-color: var(--border-md);
+  background: var(--bg-card-2);
+  transform: translateY(-2px);
+}
+ 
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+.rec-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+ 
+.rec-impact {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 4px;
+}
+ 
+.rec-impact.high { color: var(--high); background: var(--high-dim); }
+.rec-impact.medium { color: var(--medium); background: var(--medium-dim); }
+.rec-impact.low { color: var(--low); background: var(--low-dim); }
+ 
+.rec-impact-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+}
+ 
+.rec-priority {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.5px;
+}
+ 
+.rec-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.2px;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+ 
+.rec-reason {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+ 
+.rec-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 16px;
+}
+ 
+.rec-action-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+ 
+.rec-action {
+  font-size: 13px;
+  color: var(--accent);
+  line-height: 1.5;
+  font-weight: 500;
+}
+ 
+/* FEATURED REC (first card spans full width) */
+.rec-card.featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+ 
+.rec-card.featured .rec-content { }
+.rec-card.featured .rec-action-block {
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+ 
+.rec-card.featured .rec-title { font-size: 20px; }
+ 
+/* FILTER BAR */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+ 
+.filter-btn {
+  height: 28px;
+  padding: 0 12px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-2);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+ 
+.filter-btn:hover { border-color: var(--border-md); color: var(--text-1); }
+.filter-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+ 
+/* STATUS BAR */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: 13px;
+  color: var(--text-2);
+}
+ 
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+ 
+.status-dot.idle { background: var(--text-3); }
+ 
+.status-strategy {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+ 
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
+ 
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .strategy-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .recs-grid { grid-template-columns: 1fr; }
+  .rec-card.featured { grid-template-columns: 1fr; }
+  .rec-card.featured .rec-action-block { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 20px; }
+  main { padding: 32px 20px 60px; }
+  nav { padding: 0 20px; }
+  .input-grid { grid-template-columns: 1fr; }
+}
+ 
+@media (max-width: 600px) {
+  .strategy-grid { grid-template-columns: 1fr 1fr; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+ 
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg width="30" height="26" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+      <defs>
+        <linearGradient id="strip1" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#1a3a72"/>
+          <stop offset="100%" stop-color="#3a6fd8"/>
+        </linearGradient>
+        <linearGradient id="strip2" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#2a52b0"/>
+          <stop offset="100%" stop-color="#5b9ef5"/>
+        </linearGradient>
+        <linearGradient id="strip3" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#4a80e0"/>
+          <stop offset="100%" stop-color="#a8d0ff"/>
+        </linearGradient>
+      </defs>
+      <!-- left strip: shortest, darkest -->
+      <polygon points="4,26 8,26 12,10 8,10" fill="url(#strip1)"/>
+      <!-- middle strip -->
+      <polygon points="10,26 14,26 18,4 14,4" fill="url(#strip2)"/>
+      <!-- right strip: tallest, lightest -->
+      <polygon points="16,26 20,26 24,0 20,0" fill="url(#strip3)"/>
+    </svg>
+    Alfred AI
+  </div>
+  <div class="nav-right">
+    <span class="nav-badge">ANALYTICS v2.1</span>
+    <button class="btn-demo" onclick="runDemo()">Run Demo</button>
+  </div>
+</nav>
+ 
+<main>
+ 
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <div class="page-title">Business Intelligence</div>
+      <div class="page-sub">Rule-based analytics and strategic recommendations for e-commerce operations.</div>
+    </div>
+  </div>
+ 
+  <!-- STRATEGY SELECTOR -->
+  <div class="strategy-section">
+    <div class="section-label">Active Strategy</div>
+    <div class="strategy-grid" id="strategyGrid">
+      <button class="strategy-btn active" data-strategy="balanced" onclick="setStrategy('balanced',this)">
+        <div class="strategy-active-label">Active</div>
+        <div class="strategy-indicator"></div>
+        <div class="strategy-name">Balanced</div>
+        <div class="strategy-desc">Steady, risk-adjusted recommendations across all dimensions.</div>
+      </button>
+      <button class="strategy-btn" data-strategy="profit_max" onclick="setStrategy('profit_max',this)">
+        <div class="strategy-active-label">Active</div>
+        <div class="strategy-indicator"></div>
+        <div class="strategy-name">Profit Max</div>
+        <div class="strategy-desc">Prioritize margins and long-term profitability over volume.</div>
+      </button>
+      <button class="strategy-btn" data-strategy="inventory" onclick="setStrategy('inventory',this)">
+        <div class="strategy-active-label">Active</div>
+        <div class="strategy-indicator"></div>
+        <div class="strategy-name">Inventory</div>
+        <div class="strategy-desc">Clear excess stock and prevent stockouts at critical SKUs.</div>
+      </button>
+      <button class="strategy-btn" data-strategy="revenue_max" onclick="setStrategy('revenue_max',this)">
+        <div class="strategy-active-label">Active</div>
+        <div class="strategy-indicator"></div>
+        <div class="strategy-name">Revenue Max</div>
+        <div class="strategy-desc">Maximize top-line volume through competitive pricing and velocity.</div>
+      </button>
+    </div>
+  </div>
+ 
+  <!-- KPI CARDS -->
+  <div class="kpi-section">
+    <div class="section-label">Business Metrics</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Revenue</div>
+        <div class="kpi-value" id="kpi-revenue">--</div>
+        <div class="kpi-delta" id="kpi-revenue-d"><span class="delta-arrow">--</span> no data</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Orders</div>
+        <div class="kpi-value" id="kpi-orders">--</div>
+        <div class="kpi-delta" id="kpi-orders-d"><span class="delta-arrow">--</span> no data</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Conversion Rate</div>
+        <div class="kpi-value" id="kpi-cvr">--</div>
+        <div class="kpi-delta" id="kpi-cvr-d"><span class="delta-arrow">--</span> no data</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg. Order Value</div>
+        <div class="kpi-value" id="kpi-aov">--</div>
+        <div class="kpi-delta" id="kpi-aov-d"><span class="delta-arrow">--</span> no data</div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- DATA INPUT -->
+  <div class="data-section">
+    <div class="section-label">Data Input</div>
+    <div class="data-panel">
+      <div class="data-tabs">
+        <button class="data-tab active" onclick="switchTab('manual',this)">Manual Input</button>
+        <button class="data-tab" onclick="switchTab('json',this)">JSON</button>
+        <button class="data-tab" onclick="switchTab('csv',this)">CSV Upload</button>
+      </div>
+ 
+      <!-- MANUAL TAB -->
+      <div class="tab-pane active" id="tab-manual">
+        <div class="input-grid">
+          <div class="input-group">
+            <label class="input-label">Revenue ($)</label>
+            <input class="input-field" type="number" id="m-revenue" placeholder="e.g. 142500" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Orders (count)</label>
+            <input class="input-field" type="number" id="m-orders" placeholder="e.g. 1240" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Conversion Rate (%)</label>
+            <input class="input-field" type="number" id="m-cvr" placeholder="e.g. 2.4" step="0.1" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Avg. Order Value ($)</label>
+            <input class="input-field" type="number" id="m-aov" placeholder="e.g. 115" />
+          </div>
+        </div>
+ 
+        <div class="product-section">
+          <div class="product-section-title">Product Catalog</div>
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Sales (units)</th>
+                <th>Stock (units)</th>
+                <th>Margin (%)</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody"></tbody>
+          </table>
+          <button class="add-product-btn" onclick="addProductRow()">+ Add product</button>
+        </div>
+      </div>
+ 
+      <!-- JSON TAB -->
+      <div class="tab-pane" id="tab-json">
+        <div class="input-group" style="margin-bottom:16px;">
+          <label class="input-label">Paste JSON dataset</label>
+          <textarea class="json-input" id="jsonInput" placeholder='{
+  "metrics": {
+    "revenue": 142500,
+    "orders": 1240,
+    "conversionRate": 2.4,
+    "avgOrderValue": 115
+  },
+  "products": [
+    { "name": "Product A", "sales": 320, "stock": 12, "margin": 48 },
+    { "name": "Product B", "sales": 85, "stock": 310, "margin": 22 }
+  ]
+}'></textarea>
+        </div>
+      </div>
+ 
+      <!-- CSV TAB -->
+      <div class="tab-pane" id="tab-csv">
+        <div class="upload-zone" id="uploadZone"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event)"
+             onclick="document.getElementById('csvFileInput').click()">
+          <div class="upload-icon">
+            <svg width="18" height="18" fill="none" stroke="#6b7a99" stroke-width="1.5" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="upload-title">Drop your CSV here or click to browse</div>
+          <div class="upload-sub">Expected columns: name, sales, stock, margin</div>
+          <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCSVFile(event)" />
+        </div>
+        <div id="csvStatus" style="margin-top:12px;font-size:12px;color:var(--text-2);font-family:var(--font-mono);"></div>
+      </div>
+ 
+      <div class="data-actions">
+        <button class="btn-secondary" onclick="clearAll()">Clear</button>
+        <button class="btn-primary" id="analyzeBtn" onclick="runAnalysis()">Run Analysis</button>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- STATUS BAR -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-dot idle" id="statusDot"></div>
+    <span id="statusText">Ready to analyze. Load data and select a strategy.</span>
+    <span class="status-strategy" id="statusStrategy">BALANCED</span>
+  </div>
+ 
+  <!-- RECOMMENDATIONS -->
+  <div class="recs-section">
+    <div class="recs-header">
+      <div class="recs-title">Recommendations</div>
+      <div class="recs-meta" id="recsMeta"></div>
+    </div>
+ 
+    <div class="filter-bar" id="filterBar" style="display:none;">
+      <button class="filter-btn active" data-filter="all" onclick="filterRecs('all',this)">All</button>
+      <button class="filter-btn" data-filter="high" onclick="filterRecs('high',this)">High Impact</button>
+      <button class="filter-btn" data-filter="medium" onclick="filterRecs('medium',this)">Medium</button>
+      <button class="filter-btn" data-filter="low" onclick="filterRecs('low',this)">Low</button>
+    </div>
+ 
+    <div id="recsContainer">
+      <div class="recs-empty">
+        <div class="recs-empty-title">No analysis results yet</div>
+        <div class="recs-empty-sub">Enter your business data above and click Run Analysis, or use the demo dataset.</div>
+      </div>
+    </div>
+  </div>
+ 
+</main>
+</div>
+ 
+<script>
+/* ─── STATE ─── */
+let currentStrategy = 'balanced';
+let currentData = null;
+let currentRecs = [];
+let activeFilter = 'all';
+ 
+/* ─── STRATEGY CONFIG ─── */
+const STRATEGIES = {
+  balanced: {
+    label: 'BALANCED',
+    priorityOrder: ['restock','funnel','promo','discount','margin','upsell','concentration','aov'],
+    impactMultipliers: { high: 1, medium: 1, low: 1 }
+  },
+  profit_max: {
+    label: 'PROFIT MAX',
+    priorityOrder: ['margin','promo','aov','upsell','restock','funnel','discount','concentration'],
+    impactMultipliers: { high: 1, medium: 0.9, low: 0.8 },
+    suppressTypes: ['discount']
+  },
+  inventory: {
+    label: 'INVENTORY',
+    priorityOrder: ['restock','discount','concentration','margin','funnel','promo','upsell','aov'],
+    impactMultipliers: { high: 1, medium: 1, low: 0.9 }
+  },
+  revenue_max: {
+    label: 'REVENUE MAX',
+    priorityOrder: ['funnel','aov','upsell','discount','promo','restock','margin','concentration'],
+    impactMultipliers: { high: 1, medium: 1, low: 0.9 },
+    suppressTypes: ['margin']
+  }
+};
+ 
+/* ─── RULE ENGINE ─── */
+function analyzeData(data, strategy) {
+  const { metrics, products } = data;
+  const cfg = STRATEGIES[strategy];
+  const recs = [];
+ 
+  // Rule 1: Low stock + high sales → Restock
+  products.forEach(p => {
+    if (p.stock < 20 && p.sales > 50) {
+      recs.push({
+        type: 'restock',
+        impact: p.stock < 10 ? 'high' : 'medium',
+        title: stockoutTitle(strategy, p),
+        reason: `${p.name} is moving ${p.sales} units with only ${p.stock} remaining in stock. At current velocity, stockout is imminent.`,
+        action: restockAction(strategy, p),
+        product: p.name
+      });
+    }
+  });
+ 
+  // Rule 2: High stock + low sales → Discount / clearance
+  products.forEach(p => {
+    const weeksOfStock = p.sales > 0 ? (p.stock / (p.sales / 4)).toFixed(1) : 99;
+    if (p.stock > 80 && p.sales < 30) {
+      recs.push({
+        type: 'discount',
+        impact: p.stock > 150 ? 'high' : 'medium',
+        title: discountTitle(strategy, p),
+        reason: `${p.name} carries ${p.stock} units with only ${p.sales} monthly sales (~${weeksOfStock} weeks of supply). Capital tied in slow-moving inventory.`,
+        action: discountAction(strategy, p),
+        product: p.name
+      });
+    }
+  });
+ 
+  // Rule 3: Low conversion rate → Funnel/UX issue
+  if (metrics.conversionRate < 2.5) {
+    const severity = metrics.conversionRate < 1.5 ? 'high' : 'medium';
+    recs.push({
+      type: 'funnel',
+      impact: severity,
+      title: funnelTitle(strategy, metrics),
+      reason: `Your conversion rate of ${metrics.conversionRate}% is ${metrics.conversionRate < 1.5 ? 'critically below' : 'below'} the e-commerce benchmark of 2.5–3.5%. Revenue is being left on the table from existing traffic.`,
+      action: funnelAction(strategy, metrics)
+    });
+  }
+ 
+  // Rule 4: High margin + low sales → Promotion opportunity
+  products.forEach(p => {
+    if (p.margin > 45 && p.sales < 40) {
+      recs.push({
+        type: 'promo',
+        impact: 'medium',
+        title: promoTitle(strategy, p),
+        reason: `${p.name} carries a ${p.margin}% margin but generates only ${p.sales} monthly units. This is an underutilized high-value asset.`,
+        action: promoAction(strategy, p),
+        product: p.name
+      });
+    }
+  });
+ 
+  // Rule 5: Low margin products → Margin improvement
+  products.forEach(p => {
+    if (p.margin < 20 && p.sales > 60) {
+      recs.push({
+        type: 'margin',
+        impact: p.margin < 12 ? 'high' : 'medium',
+        title: marginTitle(strategy, p),
+        reason: `${p.name} drives ${p.sales} units of volume but at only ${p.margin}% margin. High velocity at thin margins creates cash flow fragility.`,
+        action: marginAction(strategy, p),
+        product: p.name
+      });
+    }
+  });
+ 
+  // Rule 6: Low AOV → Upsell opportunity
+  if (metrics.avgOrderValue < 80) {
+    recs.push({
+      type: 'upsell',
+      impact: 'medium',
+      title: upsellTitle(strategy, metrics),
+      reason: `Average order value of $${metrics.avgOrderValue} indicates limited cross-sell or bundle adoption. Each incremental AOV dollar flows directly to revenue at no acquisition cost.`,
+      action: upsellAction(strategy, metrics)
+    });
+  }
+ 
+  // Rule 7: Revenue concentration risk
+  const totalSales = products.reduce((s,p) => s + p.sales, 0);
+  products.forEach(p => {
+    const share = totalSales > 0 ? (p.sales / totalSales * 100).toFixed(1) : 0;
+    if (share > 55) {
+      recs.push({
+        type: 'concentration',
+        impact: 'high',
+        title: 'Revenue Concentration Risk',
+        reason: `${p.name} accounts for ${share}% of total unit volume. Single-SKU dependency creates significant operational and demand risk.`,
+        action: concentrationAction(strategy, p, share)
+      });
+    }
+  });
+ 
+  // Rule 8: High AOV + low orders → pricing opportunity
+  if (metrics.avgOrderValue > 200 && metrics.orders < 500) {
+    recs.push({
+      type: 'aov',
+      impact: 'low',
+      title: aovTitle(strategy, metrics),
+      reason: `High AOV of $${metrics.avgOrderValue} with ${metrics.orders} orders suggests a premium positioning that may be limiting addressable volume.`,
+      action: aovAction(strategy, metrics)
+    });
+  }
+ 
+  // Filter suppressed types
+  const suppressed = cfg.suppressTypes || [];
+  const filtered = recs.filter(r => !suppressed.includes(r.type));
+ 
+  // Sort by strategy priority order
+  filtered.sort((a, b) => {
+    const ai = cfg.priorityOrder.indexOf(a.type);
+    const bi = cfg.priorityOrder.indexOf(b.type);
+    const ap = ai === -1 ? 99 : ai;
+    const bp = bi === -1 ? 99 : bi;
+    if (ap !== bp) return ap - bp;
+    const impactRank = { high: 0, medium: 1, low: 2 };
+    return impactRank[a.impact] - impactRank[b.impact];
+  });
+ 
+  return filtered;
+}
+ 
+/* ─── STRATEGY-AWARE COPY ─── */
+function stockoutTitle(s, p) {
+  if (s === 'profit_max') return `Protect ${p.name} Revenue Stream`;
+  if (s === 'inventory') return `Critical Restock: ${p.name}`;
+  if (s === 'revenue_max') return `Unlock ${p.name} Growth Capacity`;
+  return `Restock ${p.name} to Prevent Lost Sales`;
+}
+function restockAction(s, p) {
+  if (s === 'profit_max') return `Negotiate a premium bulk reorder for ${p.name} — secure 90-day supply at a favorable unit cost to protect margin on a high-demand SKU.`;
+  if (s === 'inventory') return `Issue an emergency purchase order for ${p.name}. Target minimum 60-day safety stock. Expedite freight if necessary.`;
+  if (s === 'revenue_max') return `Maximize reorder quantity for ${p.name} to capture full demand. Consider pre-selling while stock is inbound to maintain conversion momentum.`;
+  return `Initiate a reorder for ${p.name} with a 60-day supply buffer. Monitor weekly velocity and set automated reorder triggers at the 20-unit threshold.`;
+}
+ 
+function discountTitle(s, p) {
+  if (s === 'inventory') return `Liquidate Excess ${p.name} Inventory`;
+  if (s === 'revenue_max') return `Deploy ${p.name} as Traffic Driver`;
+  if (s === 'profit_max') return `Evaluate ${p.name} SKU Performance`;
+  return `Reduce ${p.name} Overstock Through Targeted Promotion`;
+}
+function discountAction(s, p) {
+  if (s === 'inventory') return `Apply a 20–30% markdown on ${p.name} immediately. Bundle with a complementary SKU to move volume while minimizing margin erosion.`;
+  if (s === 'revenue_max') return `Price ${p.name} competitively to drive traffic and acquisition. Use excess stock as a loss-leader to increase basket size on other products.`;
+  if (s === 'profit_max') return `Rather than discounting, evaluate whether ${p.name} should remain in the catalog. If retained, test demand via limited-time bundling before committing to a price reduction.`;
+  return `Run a time-limited 15–20% promotion on ${p.name} to reduce stock to a 4-week supply. Avoid deep cuts — maintain positioning with a bundle or "value add" framing.`;
+}
+ 
+function funnelTitle(s, m) {
+  if (s === 'revenue_max') return `Conversion Rate Is Your Largest Revenue Lever`;
+  if (s === 'profit_max') return `Improve Funnel Quality, Not Just Volume`;
+  if (s === 'inventory') return `Fix Conversion Before Driving More Traffic`;
+  return `Address Conversion Rate Underperformance`;
+}
+function funnelAction(s, m) {
+  if (s === 'revenue_max') return `Prioritize conversion rate optimization above all other initiatives. A 1% CVR lift at your traffic volume represents a direct revenue multiplier. A/B test checkout flow, product pages, and CTAs this week.`;
+  if (s === 'profit_max') return `Identify which traffic segments convert best and reallocate ad spend toward those cohorts. Audit checkout friction points and remove low-intent offers that attract poor-margin buyers.`;
+  if (s === 'inventory') return `Resolve funnel friction before investing in inventory. Conversion issues upstream mean excess stock problems downstream. Audit cart abandonment and product page clarity.`;
+  return `Audit the full conversion funnel: product page → cart → checkout. Identify drop-off points using session data. Prioritize mobile checkout UX, trust signals, and page load performance.`;
+}
+ 
+function promoTitle(s, p) {
+  if (s === 'profit_max') return `Activate High-Margin ${p.name} with Targeted Campaign`;
+  if (s === 'revenue_max') return `Scale ${p.name} Volume to Match Its Margin`;
+  return `Promote ${p.name} — High Margin, Underperforming Volume`;
+}
+function promoAction(s, p) {
+  if (s === 'profit_max') return `Invest in a focused paid campaign for ${p.name} — at ${p.margin}% margin, each additional sale delivers strong contribution. Keep CAC below $${(p.margin * 0.4).toFixed(0)} to maintain profitability.`;
+  if (s === 'revenue_max') return `Run an aggressive promotional campaign for ${p.name} to unlock its volume potential. A moderate promotional investment will be ROI-positive given the ${p.margin}% margin buffer.`;
+  return `Allocate a test budget to promote ${p.name} via email and paid channels. At ${p.margin}% margin, there is room to invest in demand generation without compromising unit economics.`;
+}
+ 
+function marginTitle(s, p) {
+  if (s === 'profit_max') return `${p.name} Margin Is Critically Thin — Immediate Action Required`;
+  if (s === 'revenue_max') return `Monitor ${p.name} Margin at Scale`;
+  return `Improve ${p.name} Margin or Reassess Viability`;
+}
+function marginAction(s, p) {
+  if (s === 'profit_max') return `Raise ${p.name} pricing by 8–12% and test demand elasticity. Simultaneously, renegotiate supplier terms or find a secondary source to reduce COGS. At ${p.margin}% margin, this product cannot sustain the business long-term.`;
+  if (s === 'revenue_max') return `Flag ${p.name} for quarterly margin review. In the short term, prioritize volume to achieve supplier volume discounts, then revisit margin structure.`;
+  return `Evaluate ${p.name} COGS — identify whether supplier negotiations, volume discounts, or a modest price increase ($5–10) can improve margin without volume loss.`;
+}
+ 
+function upsellTitle(s, m) {
+  if (s === 'revenue_max') return `Lift AOV to Compound Revenue Without New Traffic`;
+  if (s === 'profit_max') return `Bundle Strategy to Improve Order Economics`;
+  return `Increase Average Order Value Through Cross-Sell`;
+}
+function upsellAction(s, m) {
+  if (s === 'revenue_max') return `Implement cart-level upsell prompts for products with complementary usage. A $15 AOV lift on ${m.orders} orders is worth $${(15 * m.orders).toLocaleString()} in revenue with zero acquisition cost.`;
+  if (s === 'profit_max') return `Design bundles that pair high-margin items with best-sellers. Bundles protect margin, increase perceived value, and improve AOV simultaneously.`;
+  return `Introduce post-cart upsell and frequently-bought-together recommendations. Target a 20% AOV lift within 60 days through systematic cross-sell placement.`;
+}
+ 
+function concentrationAction(s, p, share) {
+  if (s === 'revenue_max') return `Accelerate the catalog expansion roadmap. Diversify into adjacent categories where ${p.name}'s customer base has demonstrated adjacent demand.`;
+  if (s === 'profit_max') return `Use ${p.name}'s margin to fund development or acquisition of 2–3 complementary SKUs. Reduce dependence below 40% within two quarters.`;
+  return `Prioritize catalog diversification. Set a target to reduce ${p.name}'s share from ${share}% to below 40% over the next two quarters via adjacency expansion.`;
+}
+ 
+function aovTitle(s, m) {
+  if (s === 'profit_max') return `Premium Positioning Validated — Protect It`;
+  if (s === 'revenue_max') return `Expand Addressable Market Through Entry-Level Offering`;
+  return `Consider Volume Tier to Broaden Market Reach`;
+}
+function aovAction(s, m) {
+  if (s === 'profit_max') return `Maintain premium positioning and resist volume-led discounting. Focus on deepening value perception through content, packaging, and post-purchase experience.`;
+  if (s === 'revenue_max') return `Introduce an entry-level SKU or starter bundle at a lower price point to expand top-of-funnel volume and upsell over time.`;
+  return `Test a starter or introductory SKU to capture price-sensitive demand without cannibalizing the core offering. Monitor margin impact carefully.`;
+}
+ 
+/* ─── UI RENDERING ─── */
+function renderRecs(recs) {
+  currentRecs = recs;
+  const container = document.getElementById('recsContainer');
+  const filterBar = document.getElementById('filterBar');
+  const meta = document.getElementById('recsMeta');
+ 
+  if (!recs || recs.length === 0) {
+    filterBar.style.display = 'none';
+    container.innerHTML = `<div class="recs-empty">
+      <div class="recs-empty-title">No signals detected</div>
+      <div class="recs-empty-sub">Your data did not trigger any recommendation rules. Try the demo dataset for a full example.</div>
+    </div>`;
+    return;
+  }
+ 
+  filterBar.style.display = 'flex';
+  const high = recs.filter(r => r.impact === 'high').length;
+  const medium = recs.filter(r => r.impact === 'medium').length;
+  meta.textContent = `${recs.length} signals — ${high} high, ${medium} medium`;
+ 
+  renderFiltered(recs, activeFilter);
+}
+ 
+function renderFiltered(recs, filter) {
+  const container = document.getElementById('recsContainer');
+  const filtered = filter === 'all' ? recs : recs.filter(r => r.impact === filter);
+ 
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="recs-empty">
+      <div class="recs-empty-title">No ${filter}-impact signals</div>
+      <div class="recs-empty-sub">Try viewing all signals or adjusting your strategy.</div>
+    </div>`;
+    return;
+  }
+ 
+  const cards = filtered.map((r, i) => {
+    const featured = i === 0;
+    const delay = i * 0.06;
+    const impactClass = r.impact;
+ 
+    if (featured) {
+      return `<div class="rec-card featured impact-${impactClass}" style="animation-delay:${delay}s">
+        <div class="rec-content">
+          <div class="rec-card-top">
+            <span class="rec-impact ${impactClass}"><span class="rec-impact-dot"></span>${r.impact.toUpperCase()} IMPACT</span>
+            <span class="rec-priority">PRIORITY 01</span>
+          </div>
+          <div class="rec-title">${r.title}</div>
+          <div class="rec-reason">${r.reason}</div>
+        </div>
+        <div class="rec-action-block">
+          <div class="rec-action-label">Recommended Action</div>
+          <div class="rec-action">${r.action}</div>
+        </div>
+      </div>`;
+    }
+ 
+    return `<div class="rec-card impact-${impactClass}" style="animation-delay:${delay}s">
+      <div class="rec-card-top">
+        <span class="rec-impact ${impactClass}"><span class="rec-impact-dot"></span>${r.impact.toUpperCase()} IMPACT</span>
+        <span class="rec-priority">PRIORITY ${String(i+1).padStart(2,'0')}</span>
+      </div>
+      <div class="rec-title">${r.title}</div>
+      <div class="rec-reason">${r.reason}</div>
+      <div class="rec-divider"></div>
+      <div class="rec-action-label">Recommended Action</div>
+      <div class="rec-action">${r.action}</div>
+    </div>`;
+  }).join('');
+ 
+  container.innerHTML = `<div class="recs-grid">${cards}</div>`;
+}
+ 
+function filterRecs(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFiltered(currentRecs, filter);
+}
+ 
+/* ─── KPI UPDATE ─── */
+function updateKPIs(metrics) {
+  const fmt = (v, prefix='', suffix='') => v != null ? `${prefix}${Number(v).toLocaleString()}${suffix}` : '--';
+ 
+  document.getElementById('kpi-revenue').textContent = metrics.revenue ? '$' + Number(metrics.revenue).toLocaleString() : '--';
+  document.getElementById('kpi-orders').textContent  = metrics.orders ? Number(metrics.orders).toLocaleString() : '--';
+  document.getElementById('kpi-cvr').textContent     = metrics.conversionRate ? metrics.conversionRate + '%' : '--';
+  document.getElementById('kpi-aov').textContent     = metrics.avgOrderValue ? '$' + metrics.avgOrderValue : '--';
+ 
+  const setDelta = (id, val, benchmark, prefix='', suffix='') => {
+    const el = document.getElementById(id);
+    if (val == null) { el.innerHTML = '<span class="delta-arrow">--</span> no data'; return; }
+    const isGood = val >= benchmark;
+    el.innerHTML = `<span class="delta-arrow ${isGood?'delta-up':'delta-down'}">${isGood?'▲':'▼'}</span>
+      <span class="${isGood?'delta-up':'delta-down'}">${prefix}${Number(val).toLocaleString()}${suffix} vs ${prefix}${benchmark}${suffix} benchmark</span>`;
+  };
+ 
+  setDelta('kpi-revenue-d', metrics.revenue, 100000, '$');
+  setDelta('kpi-orders-d', metrics.orders, 800, '', ' orders');
+  setDelta('kpi-cvr-d', metrics.conversionRate, 2.5, '', '%');
+  setDelta('kpi-aov-d', metrics.avgOrderValue, 85, '$');
+}
+ 
+/* ─── STRATEGY SWITCH ─── */
+function setStrategy(strategy, btn) {
+  currentStrategy = strategy;
+  document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('statusStrategy').textContent = STRATEGIES[strategy].label;
+ 
+  if (currentData) {
+    runAnalysis(true);
+  }
+}
+ 
+/* ─── TAB SWITCH ─── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.data-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+ 
+/* ─── PRODUCT TABLE ─── */
+function addProductRow(name='', sales='', stock='', margin='') {
+  const tbody = document.getElementById('productTableBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" value="${name}" placeholder="Product name" /></td>
+    <td><input type="number" value="${sales}" placeholder="0" /></td>
+    <td><input type="number" value="${stock}" placeholder="0" /></td>
+    <td><input type="number" value="${margin}" placeholder="0" step="0.1" /></td>
+  `;
+  tbody.appendChild(tr);
+}
+ 
+function getManualData() {
+  const metrics = {
+    revenue: parseFloat(document.getElementById('m-revenue').value) || null,
+    orders: parseInt(document.getElementById('m-orders').value) || null,
+    conversionRate: parseFloat(document.getElementById('m-cvr').value) || null,
+    avgOrderValue: parseFloat(document.getElementById('m-aov').value) || null
+  };
+ 
+  const products = [];
+  document.querySelectorAll('#productTableBody tr').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const name = inputs[0].value.trim();
+    if (!name) return;
+    products.push({
+      name,
+      sales: parseFloat(inputs[1].value) || 0,
+      stock: parseFloat(inputs[2].value) || 0,
+      margin: parseFloat(inputs[3].value) || 0
+    });
+  });
+ 
+  return { metrics, products };
+}
+ 
+/* ─── ANALYSIS ─── */
+function runAnalysis(rerun = false) {
+  let data = currentData;
+ 
+  if (!rerun) {
+    const activeTab = document.querySelector('.data-tab.active').textContent.trim();
+ 
+    if (activeTab === 'Manual Input') {
+      data = getManualData();
+    } else if (activeTab === 'JSON') {
+      try {
+        const raw = document.getElementById('jsonInput').value.trim();
+        data = JSON.parse(raw);
+      } catch(e) {
+        setStatus('error', 'Invalid JSON — please check your format.');
+        return;
+      }
+    }
+ 
+    if (!data || (!data.metrics && !data.products?.length)) {
+      setStatus('error', 'No data detected. Add metrics or product data first.');
+      return;
+    }
+ 
+    if (!data.metrics) data.metrics = {};
+    if (!data.products) data.products = [];
+ 
+    currentData = data;
+  }
+ 
+  updateKPIs(currentData.metrics);
+ 
+  const recs = analyzeData(currentData, currentStrategy);
+  renderRecs(recs);
+ 
+  const label = STRATEGIES[currentStrategy].label;
+  setStatus('active', `Analysis complete — ${recs.length} recommendations generated under ${label} strategy.`);
+}
+ 
+function setStatus(state, msg) {
+  document.getElementById('statusText').textContent = msg;
+  const dot = document.getElementById('statusDot');
+  dot.className = 'status-dot ' + (state === 'active' ? '' : state === 'error' ? 'error' : 'idle');
+  if (state === 'error') dot.style.background = 'var(--red)';
+  else if (state === 'active') dot.style.background = 'var(--green)';
+  else dot.style.background = 'var(--text-3)';
+}
+ 
+/* ─── DEMO MODE ─── */
+function runDemo() {
+  const demoData = {
+    metrics: {
+      revenue: 142500,
+      orders: 1240,
+      conversionRate: 1.8,
+      avgOrderValue: 115
+    },
+    products: [
+      { name: 'Wireless Pro Headphones', sales: 420, stock: 8, margin: 52 },
+      { name: 'USB-C Hub Elite',         sales: 28, stock: 215, margin: 18 },
+      { name: 'Portable Charger 20K',    sales: 310, stock: 6, margin: 38 },
+      { name: 'Desk Cable Organizer',    sales: 12, stock: 180, margin: 60 },
+      { name: 'Smart LED Strip (2m)',    sales: 95, stock: 44, margin: 42 }
+    ]
+  };
+ 
+  // Populate manual tab
+  document.getElementById('m-revenue').value = demoData.metrics.revenue;
+  document.getElementById('m-orders').value = demoData.metrics.orders;
+  document.getElementById('m-cvr').value = demoData.metrics.conversionRate;
+  document.getElementById('m-aov').value = demoData.metrics.avgOrderValue;
+ 
+  document.getElementById('productTableBody').innerHTML = '';
+  demoData.products.forEach(p => addProductRow(p.name, p.sales, p.stock, p.margin));
+ 
+  // Switch to manual tab
+  document.querySelectorAll('.data-tab')[0].click();
+ 
+  currentData = demoData;
+  updateKPIs(demoData.metrics);
+ 
+  const recs = analyzeData(demoData, currentStrategy);
+  renderRecs(recs);
+ 
+  const label = STRATEGIES[currentStrategy].label;
+  setStatus('active', `Demo loaded — ${recs.length} recommendations under ${label} strategy.`);
+}
+ 
+/* ─── CLEAR ─── */
+function clearAll() {
+  ['m-revenue','m-orders','m-cvr','m-aov'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('productTableBody').innerHTML = '';
+  document.getElementById('jsonInput').value = '';
+  document.getElementById('csvStatus').textContent = '';
+  currentData = null;
+  currentRecs = [];
+  updateKPIs({});
+  document.getElementById('filterBar').style.display = 'none';
+  document.getElementById('recsMeta').textContent = '';
+  document.getElementById('recsContainer').innerHTML = `<div class="recs-empty">
+    <div class="recs-empty-title">No analysis results yet</div>
+    <div class="recs-empty-sub">Enter your business data above and click Run Analysis, or use the demo dataset.</div>
+  </div>`;
+  setStatus('idle', 'Ready to analyze. Load data and select a strategy.');
+}
+ 
+/* ─── CSV ─── */
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processCSV(file);
+}
+function handleCSVFile(e) {
+  const file = e.target.files[0];
+  if (file) processCSV(file);
+}
+ 
+function processCSV(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+ 
+    const products = [];
+    for (let i = 1; i < lines.length; i++) {
+      const vals = lines[i].split(',');
+      const row = {};
+      headers.forEach((h, j) => row[h] = vals[j]?.trim());
+      if (row.name || row.product) {
+        products.push({
+          name: row.name || row.product || `Product ${i}`,
+          sales: parseFloat(row.sales || row.units_sold || row.volume) || 0,
+          stock: parseFloat(row.stock || row.inventory || row.units_in_stock) || 0,
+          margin: parseFloat(row.margin || row.margin_pct || row.profit_margin) || 0
+        });
+      }
+    }
+ 
+    currentData = currentData || { metrics: {} };
+    currentData.products = products;
+    document.getElementById('csvStatus').textContent = `Loaded ${products.length} products from ${file.name}`;
+  };
+  reader.readAsText(file);
+}
+ 
+/* ─── INIT ─── */
+addProductRow();
+addProductRow();
+addProductRow();
+</script>
+</body>
+</html>
