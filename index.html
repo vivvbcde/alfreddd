@@ -1,1651 +1,799 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Alfred AI — Business Analytics</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-:root {
-  --bg:            #010c1e;
-  --bg-2:          #031629;
-  --bg-card:       #061c33;
-  --bg-card-2:     #0a2240;
-  --bg-input:      #040f20;
-  --border:        rgba(91,155,240,0.10);
-  --border-md:     rgba(91,155,240,0.18);
-  --border-hi:     rgba(91,155,240,0.30);
-  --accent:        #4d8fff;
-  --accent-2:      #7ab3ff;
-  --accent-dim:    rgba(77,143,255,0.14);
-  --accent-glow:   rgba(77,143,255,0.07);
-  --grad-a:        #1a4fd6;
-  --grad-b:        #3b82f6;
-  --grad-c:        #7db9ff;
-  --text-1:        #ddeeff;
-  --text-2:        #6690b8;
-  --text-3:        #2a4a6e;
-  --green:         #3ecf8e;
-  --green-dim:     rgba(62,207,142,0.12);
-  --amber:         #f5a623;
-  --amber-dim:     rgba(245,166,35,0.12);
-  --red:           #ff5a5a;
-  --red-dim:       rgba(255,90,90,0.12);
-  --high:          #ff6b6b;
-  --high-dim:      rgba(255,107,107,0.12);
-  --medium:        #f5a623;
-  --medium-dim:    rgba(245,166,35,0.12);
-  --low:           #3ecf8e;
-  --low-dim:       rgba(62,207,142,0.12);
-  --font-display:  'Syne', sans-serif;
-  --font-body:     'Instrument Sans', sans-serif;
-  --font-mono:     'DM Mono', monospace;
-  --radius:        8px;
-  --radius-lg:     12px;
-  --radius-xl:     16px;
-  --transition:    0.18s cubic-bezier(0.4,0,0.2,1);
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#010c1e;--bg2:#031629;--bgc:#061c33;--bgc2:#0a2240;--bgi:#040f20;
+  --b:rgba(91,155,240,0.10);--bm:rgba(91,155,240,0.18);--bh:rgba(91,155,240,0.32);
+  --ac:#4d8fff;--ac2:#7ab3ff;--acd:rgba(77,143,255,0.14);--acg:rgba(77,143,255,0.06);
+  --ga:#1a4fd6;--gb:#3b82f6;--gc:#7db9ff;
+  --t1:#ddeeff;--t2:#6690b8;--t3:#2a4a6e;
+  --gr:#3ecf8e;--grd:rgba(62,207,142,0.12);
+  --am:#f5a623;--amd:rgba(245,166,35,0.12);
+  --rd:#ff6b6b;--rdd:rgba(255,107,107,0.12);
+  --fd:'Syne',sans-serif;--fb:'Instrument Sans',sans-serif;--fm:'DM Mono',monospace;
+  --r:8px;--rl:12px;--rxl:16px;--tr:0.18s cubic-bezier(0.4,0,0.2,1)
 }
- 
-html { scroll-behavior: smooth; }
- 
-body {
-  background: linear-gradient(155deg,
-    #010c1e 0%,
-    #031729 25%,
-    #052240 50%,
-    #082a50 75%,
-    #0a2f5a 100%
-  );
-  background-attachment: fixed;
-  color: var(--text-1);
-  font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.6;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
+html{scroll-behavior:smooth}
+body{
+  background:linear-gradient(155deg,#010c1e 0%,#031729 25%,#052240 50%,#082a50 75%,#0a2f5a 100%);
+  background-attachment:fixed;color:var(--t1);font-family:var(--fb);font-size:14px;
+  line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased
 }
- 
-/* SUBTLE GRID TEXTURE */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(91,155,240,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(91,155,240,0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-  z-index: 0;
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(91,155,240,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(91,155,240,0.022) 1px,transparent 1px);
+  background-size:48px 48px
 }
- 
-/* TOP GLOW */
-body::after {
-  content: '';
-  position: fixed;
-  top: -180px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 900px;
-  height: 400px;
-  background: radial-gradient(ellipse at center,
-    rgba(59,130,246,0.18) 0%,
-    rgba(29,78,216,0.08) 45%,
-    transparent 72%
-  );
-  pointer-events: none;
-  z-index: 0;
+body::after{
+  content:'';position:fixed;top:-180px;left:50%;transform:translateX(-50%);
+  width:900px;height:400px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at center,rgba(59,130,246,0.18) 0%,rgba(29,78,216,0.07) 45%,transparent 72%)
 }
- 
-.app { position: relative; z-index: 1; }
- 
-/* NAV */
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  height: 72px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(1,12,30,0.75);
-  backdrop-filter: blur(24px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+.app{position:relative;z-index:1}
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:72px;border-bottom:1px solid var(--b);
+  background:rgba(1,12,30,0.82);backdrop-filter:blur(24px);position:sticky;top:0;z-index:100
 }
- 
-.nav-logo {
-  display: flex;
-  align-items: center;
-  font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.8px;
-  background: linear-gradient(105deg, #ffffff 0%, var(--grad-c) 60%, var(--grad-b) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.nav-logo{
+  display:flex;align-items:center;gap:12px;font-family:var(--fd);
+  font-size:22px;font-weight:700;letter-spacing:-0.5px;
+  background:linear-gradient(105deg,#fff 0%,var(--gc) 55%,var(--gb) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
 }
- 
-.nav-right { display: flex; align-items: center; gap: 12px; }
- 
-.nav-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border-md);
-  color: var(--text-2);
-  letter-spacing: 0.5px;
+.nav-tabs{display:flex;gap:4px;background:rgba(4,15,32,0.6);border:1px solid var(--b);border-radius:10px;padding:4px}
+.nav-tab{
+  height:32px;padding:0 22px;background:none;border:none;border-radius:7px;
+  color:var(--t2);font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:var(--tr)
 }
- 
-.btn-demo {
-  height: 34px;
-  padding: 0 18px;
-  background: linear-gradient(105deg, var(--grad-a) 0%, var(--grad-b) 100%);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-  box-shadow: 0 2px 16px rgba(59,130,246,0.30);
+.nav-tab:hover{color:var(--t1)}
+.nav-tab.active{background:rgba(77,143,255,0.18);color:var(--ac2);border:1px solid rgba(77,143,255,0.28)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-badge{font-family:var(--fm);font-size:10px;padding:3px 9px;border-radius:4px;border:1px solid var(--bm);color:var(--t2);letter-spacing:0.5px}
+.btn-demo{
+  height:36px;padding:0 20px;background:linear-gradient(105deg,var(--ga) 0%,var(--gb) 100%);
+  color:#fff;border:none;border-radius:var(--r);font-family:var(--fb);font-size:13px;font-weight:500;
+  cursor:pointer;transition:var(--tr);box-shadow:0 2px 16px rgba(59,130,246,0.28)
 }
- 
-.btn-demo:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 22px rgba(59,130,246,0.40); }
-.btn-demo:active { transform: translateY(0); }
- 
-/* MAIN LAYOUT */
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 48px 32px 80px;
+.btn-demo:hover{opacity:0.88;transform:translateY(-1px)}
+.btn-demo:active{transform:translateY(0)}
+.page{display:none}
+.page.active{display:block}
+main{max-width:1240px;margin:0 auto;padding:48px 32px 80px}
+.sec-label{font-family:var(--fm);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+
+/* PAGE 1 HEADER */
+.p1-header{margin-bottom:48px}
+.p1-title{font-family:var(--fd);font-size:36px;font-weight:800;letter-spacing:-1.2px;color:var(--t1);margin-bottom:14px;line-height:1.15}
+.p1-sub{
+  font-family:var(--fd);font-size:20px;font-weight:700;letter-spacing:-0.4px;
+  background:linear-gradient(100deg,#a8d4ff 0%,var(--ac2) 40%,#7affdb 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.35;max-width:680px
 }
- 
-/* PAGE HEADER */
-.page-header {
-  margin-bottom: 48px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+
+/* STRATEGY */
+.strat-section{margin-bottom:48px}
+.strat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.strat-btn{
+  position:relative;padding:30px 26px 26px;background:var(--bgc);border:1px solid var(--b);
+  border-radius:var(--rxl);cursor:pointer;transition:var(--tr);text-align:left;overflow:hidden;
+  min-height:200px;display:flex;flex-direction:column
 }
- 
-.page-title {
-  font-family: var(--font-display);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.5px;
-  line-height: 1.2;
+.strat-btn::before{content:'';position:absolute;inset:0;opacity:0;transition:var(--tr);background:linear-gradient(140deg,rgba(77,143,255,0.15) 0%,rgba(59,130,246,0.05) 50%,transparent 100%)}
+.strat-btn:hover{border-color:var(--bm);background:var(--bgc2);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.35)}
+.strat-btn.active{border-color:rgba(77,143,255,0.6);background:var(--bgc2);box-shadow:0 0 0 1px rgba(77,143,255,0.14) inset,0 12px 40px rgba(29,78,216,0.28)}
+.strat-btn.active::before{opacity:1}
+.strat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.strat-dot{width:9px;height:9px;border-radius:50%;background:var(--t3);transition:var(--tr)}
+.strat-btn.active .strat-dot{background:linear-gradient(135deg,var(--gb),var(--gc));box-shadow:0 0 12px rgba(77,143,255,0.6)}
+.strat-pill{font-family:var(--fm);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ac);background:var(--acd);padding:3px 9px;border-radius:4px;opacity:0;transition:var(--tr)}
+.strat-btn.active .strat-pill{opacity:1}
+.strat-name{font-family:var(--fd);font-size:21px;font-weight:700;color:var(--t1);letter-spacing:-0.4px;margin-bottom:10px}
+.strat-desc{font-size:13px;color:var(--t2);line-height:1.55;flex:1}
+.strat-tag{margin-top:18px;display:inline-block;font-family:var(--fm);font-size:10px;letter-spacing:0.5px;padding:4px 11px;border-radius:4px;border:1px solid var(--b);color:var(--t3);transition:var(--tr);align-self:flex-start}
+.strat-btn.active .strat-tag{border-color:rgba(77,143,255,0.32);color:var(--ac2)}
+
+/* INPUT PANELS */
+.panels-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.panel{background:var(--bgc);border:1px solid var(--b);border-radius:var(--rxl);overflow:hidden}
+.panel-head{padding:20px 24px 16px;border-bottom:1px solid var(--b)}
+.panel-title{font-family:var(--fd);font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.panel-sub{font-size:11px;color:var(--t2)}
+.panel-body{padding:20px 24px 24px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field-label{font-size:11px;color:var(--t2);font-family:var(--fm);letter-spacing:0.4px}
+.finput{
+  background:var(--bgi);border:1px solid var(--b);border-radius:var(--r);
+  color:var(--t1);font-family:var(--fm);font-size:13px;padding:11px 14px;width:100%;transition:var(--tr);outline:none
 }
- 
-.page-sub {
-  font-size: 14px;
-  color: var(--text-2);
-  margin-top: 6px;
-}
- 
-.header-actions { display: flex; gap: 10px; }
- 
-/* ─── STRATEGY SELECTOR ─── */
-.strategy-section {
-  margin-bottom: 36px;
-}
- 
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 12px;
-}
- 
-.strategy-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
- 
-.strategy-btn {
-  position: relative;
-  padding: 18px 16px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: var(--transition);
-  text-align: left;
-  overflow: hidden;
-}
- 
-.strategy-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  background: linear-gradient(140deg, rgba(77,143,255,0.14) 0%, rgba(59,130,246,0.06) 50%, transparent 100%);
-  transition: var(--transition);
-}
- 
-.strategy-btn:hover {
-  border-color: var(--border-md);
-  background: var(--bg-card-2);
-  transform: translateY(-1px);
-}
- 
-.strategy-btn.active {
-  border-color: rgba(77,143,255,0.55);
-  background: var(--bg-card-2);
-  box-shadow: 0 0 0 1px rgba(77,143,255,0.12) inset,
-              0 4px 24px rgba(29,78,216,0.18);
-}
- 
-.strategy-btn.active::before { opacity: 1; }
- 
-.strategy-indicator {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--text-3);
-  margin-bottom: 12px;
-  transition: var(--transition);
-}
- 
-.strategy-btn.active .strategy-indicator {
-  background: linear-gradient(135deg, var(--grad-b), var(--grad-c));
-  box-shadow: 0 0 8px rgba(77,143,255,0.5);
-}
- 
-.strategy-name {
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-1);
-  margin-bottom: 4px;
-  letter-spacing: -0.2px;
-}
- 
-.strategy-desc {
-  font-size: 12px;
-  color: var(--text-2);
-  line-height: 1.5;
-}
- 
-.strategy-active-label {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-dim);
-  padding: 3px 7px;
-  border-radius: 4px;
-  opacity: 0;
-  transition: var(--transition);
-}
- 
-.strategy-btn.active .strategy-active-label { opacity: 1; }
- 
-/* ─── KPI CARDS ─── */
-.kpi-section { margin-bottom: 40px; }
- 
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
- 
-.kpi-card {
-  padding: 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-}
- 
-.kpi-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 3px;
-  height: 100%;
-  background: linear-gradient(180deg, var(--grad-b) 0%, var(--grad-c) 100%);
-  opacity: 0.5;
-  border-radius: 3px 0 0 3px;
-  transition: var(--transition);
-}
- 
-.kpi-card:hover { border-color: var(--border-md); }
-.kpi-card:hover::after { opacity: 1; }
- 
-.kpi-label {
-  font-size: 11px;
-  color: var(--text-2);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 10px;
-  font-family: var(--font-mono);
-}
- 
-.kpi-value {
-  font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.5px;
-  margin-bottom: 6px;
-  line-height: 1;
-}
- 
-.kpi-delta {
-  font-size: 12px;
-  color: var(--text-2);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
- 
-.delta-up { color: var(--green); }
-.delta-down { color: var(--red); }
-.delta-arrow { font-size: 10px; }
- 
-/* ─── DATA INPUT ─── */
-.data-section { margin-bottom: 40px; }
- 
-.data-panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-}
- 
-.data-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-}
- 
-.data-tab {
-  padding: 14px 16px;
-  font-size: 13px;
-  color: var(--text-2);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: var(--transition);
-  background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  font-family: var(--font-body);
-}
- 
-.data-tab:hover { color: var(--text-1); }
-.data-tab.active {
-  color: var(--text-1);
-  border-bottom-color: var(--grad-b);
-  background: linear-gradient(180deg, transparent, rgba(59,130,246,0.04));
-}
- 
-.tab-pane { display: none; padding: 24px; }
-.tab-pane.active { display: block; }
- 
-/* METRIC INPUTS */
-.input-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
- 
-.input-group { display: flex; flex-direction: column; gap: 6px; }
- 
-.input-label {
-  font-size: 12px;
-  color: var(--text-2);
-  font-family: var(--font-mono);
-  letter-spacing: 0.3px;
-}
- 
-.input-field {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-1);
-  font-family: var(--font-mono);
-  font-size: 14px;
-  padding: 10px 14px;
-  width: 100%;
-  transition: var(--transition);
-  outline: none;
-}
- 
-.input-field:focus { border-color: var(--grad-b); background: rgba(59,130,246,0.05); }
-.input-field::placeholder { color: var(--text-3); }
- 
+.finput:focus{border-color:var(--ac);background:rgba(77,143,255,0.04)}
+.finput::placeholder{color:var(--t3)}
+.panel-full{background:var(--bgc);border:1px solid var(--b);border-radius:var(--rxl);overflow:hidden;margin-bottom:18px}
+
 /* PRODUCT TABLE */
-.product-section { margin-top: 20px; }
- 
-.product-section-title {
-  font-size: 12px;
-  color: var(--text-2);
-  font-family: var(--font-mono);
-  letter-spacing: 0.3px;
-  margin-bottom: 12px;
+.ptable-wrap{padding:0 24px 20px;overflow-x:auto}
+.ptable{width:100%;border-collapse:collapse;font-size:13px;min-width:820px}
+.ptable th{text-align:left;padding:10px 12px;color:var(--t3);font-size:10px;font-family:var(--fm);letter-spacing:0.8px;border-bottom:1px solid var(--b);text-transform:uppercase}
+.ptable td{padding:10px 12px;border-bottom:1px solid var(--b);color:var(--t1)}
+.ptable tr:last-child td{border-bottom:none}
+.ptable td input{background:transparent;border:none;outline:none;color:var(--t1);font-family:var(--fm);font-size:13px;width:100%}
+.ptable td input::placeholder{color:var(--t3)}
+.ptable td input:focus{color:var(--ac2)}
+.table-actions{padding:10px 24px 20px}
+.add-row-btn{background:none;border:1px dashed var(--bm);border-radius:var(--r);color:var(--t2);font-size:12px;padding:8px 16px;cursor:pointer;transition:var(--tr);font-family:var(--fb)}
+.add-row-btn:hover{border-color:var(--ac);color:var(--ac)}
+.dtabs{display:flex;border-bottom:1px solid var(--b);padding:0 24px}
+.dtab{padding:14px 16px;font-size:13px;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:var(--tr);background:none;border-top:none;border-left:none;border-right:none;font-family:var(--fb)}
+.dtab:hover{color:var(--t1)}
+.dtab.active{color:var(--t1);border-bottom-color:var(--ac)}
+.tabpane{display:none}
+.tabpane.active{display:block}
+.json-ta{background:var(--bgi);border:none;color:var(--t1);font-family:var(--fm);font-size:12px;padding:20px 24px;width:100%;min-height:200px;resize:vertical;outline:none;line-height:1.7}
+.upload-zone{margin:20px 24px 24px;border:1px dashed var(--bm);border-radius:var(--rl);padding:48px 24px;text-align:center;cursor:pointer;transition:var(--tr)}
+.upload-zone:hover{border-color:var(--ac);background:var(--acg)}
+.upload-zone.drag-over{border-color:var(--ac);background:var(--acd)}
+.uicon{width:44px;height:44px;margin:0 auto 14px;border:1px solid var(--bm);border-radius:10px;display:flex;align-items:center;justify-content:center}
+.utitle{font-size:14px;color:var(--t1);margin-bottom:6px}
+.usub{font-size:12px;color:var(--t2)}
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;margin-top:8px;border-top:1px solid var(--b)}
+.bottom-left{display:flex;gap:10px}
+.btn-sec{height:40px;padding:0 18px;background:none;border:1px solid var(--bm);border-radius:var(--r);color:var(--t2);font-family:var(--fb);font-size:13px;cursor:pointer;transition:var(--tr)}
+.btn-sec:hover{border-color:var(--bh);color:var(--t1)}
+.btn-pri{height:42px;padding:0 32px;background:linear-gradient(105deg,var(--ga) 0%,var(--gb) 100%);border:none;border-radius:var(--r);color:#fff;font-family:var(--fb);font-size:14px;font-weight:600;cursor:pointer;transition:var(--tr);box-shadow:0 2px 20px rgba(59,130,246,0.35)}
+.btn-pri:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 4px 28px rgba(59,130,246,0.45)}
+.btn-pri:active{transform:translateY(0)}
+
+/* PAGE 2 */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.kpi-card{padding:22px;background:var(--bgc);border:1px solid var(--b);border-radius:var(--rxl);transition:var(--tr)}
+.kpi-card:hover{border-color:var(--bm)}
+.kpi-label{font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;font-family:var(--fm)}
+.kpi-val{font-family:var(--fd);font-size:28px;font-weight:700;color:var(--t1);letter-spacing:-0.6px;margin-bottom:6px;line-height:1}
+.kpi-delta{font-size:12px;color:var(--t2)}
+.dup{color:var(--gr)}.ddn{color:var(--rd)}
+.graphs-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px}
+.graph-card{background:var(--bgc);border:1px solid var(--b);border-radius:var(--rxl);padding:24px;overflow:hidden}
+.graph-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px}
+.graph-title{font-family:var(--fd);font-size:15px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.graph-sub{font-size:12px;color:var(--t2)}
+.graph-uplift{font-family:var(--fd);font-size:24px;font-weight:700;background:linear-gradient(100deg,var(--gr) 0%,#7affc9 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.graph-uplift-label{font-size:11px;color:var(--gr);font-family:var(--fm);text-align:right}
+.chart-wrap{position:relative;height:190px;margin-top:16px}
+.status-bar{display:flex;align-items:center;gap:10px;margin-bottom:24px;padding:14px 18px;background:var(--bgc);border:1px solid var(--b);border-radius:var(--rl);font-size:13px;color:var(--t2)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0}
+.sstrat{margin-left:auto;font-family:var(--fm);font-size:11px;color:var(--ac);background:var(--acd);padding:3px 10px;border-radius:4px}
+.filter-bar{display:flex;gap:8px;margin-bottom:20px}
+.fbtn{height:30px;padding:0 14px;background:none;border:1px solid var(--b);border-radius:5px;color:var(--t2);font-size:11px;font-family:var(--fm);letter-spacing:0.3px;cursor:pointer;transition:var(--tr)}
+.fbtn:hover{border-color:var(--bm);color:var(--t1)}
+.fbtn.active{border-color:var(--ac);color:var(--ac);background:var(--acd)}
+.recs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.recs-title{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--t1);letter-spacing:-0.4px}
+.recs-meta{font-size:12px;color:var(--t2);font-family:var(--fm)}
+.recs-empty{padding:80px 24px;text-align:center;background:var(--bgc);border:1px solid var(--b);border-radius:var(--rxl)}
+.recs-empty-title{font-size:16px;color:var(--t2);margin-bottom:8px;font-family:var(--fd)}
+.recs-empty-sub{font-size:13px;color:var(--t3)}
+.recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.rec-card{background:var(--bgc);border:1px solid var(--b);border-radius:var(--rxl);padding:26px;transition:var(--tr);position:relative;overflow:hidden;animation:fsu 0.35s cubic-bezier(0.4,0,0.2,1) both}
+.rec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
+.rec-card.impact-high::before{background:linear-gradient(90deg,transparent,var(--rd),transparent)}
+.rec-card.impact-medium::before{background:linear-gradient(90deg,transparent,var(--am),transparent)}
+.rec-card.impact-low::before{background:linear-gradient(90deg,transparent,var(--gr),transparent)}
+.rec-card:hover{border-color:var(--bm);background:var(--bgc2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+@keyframes fsu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.rec-card.featured{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.rec-card.featured .rab{border-left:1px solid var(--b);padding-left:28px;display:flex;flex-direction:column;justify-content:center}
+.rct{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.rimp{display:inline-flex;align-items:center;gap:6px;font-family:var(--fm);font-size:10px;letter-spacing:0.8px;text-transform:uppercase;padding:4px 10px;border-radius:4px}
+.rimp.high{color:var(--rd);background:var(--rdd)}
+.rimp.medium{color:var(--am);background:var(--amd)}
+.rimp.low{color:var(--gr);background:var(--grd)}
+.rimp-dot{width:4px;height:4px;border-radius:50%;background:currentColor}
+.rpri{font-family:var(--fm);font-size:10px;color:var(--t3);letter-spacing:0.5px}
+.rtitle{font-family:var(--fd);font-size:16px;font-weight:600;color:var(--t1);letter-spacing:-0.2px;margin-bottom:10px;line-height:1.3}
+.rec-card.featured .rtitle{font-size:20px}
+.rreason{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:18px}
+.rdiv{height:1px;background:var(--b);margin-bottom:16px}
+.ralabel{font-family:var(--fm);font-size:10px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.raction{font-size:13px;color:var(--ac);line-height:1.5;font-weight:500}
+
+@media(max-width:960px){
+  .strat-grid{grid-template-columns:1fr 1fr}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .recs-grid{grid-template-columns:1fr}
+  .panels-row{grid-template-columns:1fr}
+  .graphs-row{grid-template-columns:1fr}
+  .rec-card.featured{grid-template-columns:1fr}
+  .rec-card.featured .rab{border-left:none;border-top:1px solid var(--b);padding-left:0;padding-top:20px}
+  main{padding:32px 20px 60px}
+  nav{padding:0 20px}
 }
- 
-.product-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
- 
-.product-table th {
-  text-align: left;
-  padding: 8px 12px;
-  color: var(--text-3);
-  font-size: 11px;
-  font-family: var(--font-mono);
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid var(--border);
-}
- 
-.product-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-1);
-}
- 
-.product-table tr:last-child td { border-bottom: none; }
-.product-table td input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text-1);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  width: 100%;
-}
- 
-.product-table td input:focus { color: var(--accent); }
- 
-.add-product-btn {
-  margin-top: 12px;
-  background: none;
-  border: 1px dashed var(--border-md);
-  border-radius: var(--radius);
-  color: var(--text-2);
-  font-size: 12px;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: var(--transition);
-  font-family: var(--font-body);
-}
- 
-.add-product-btn:hover { border-color: var(--accent); color: var(--accent); }
- 
-/* JSON TEXTAREA */
-.json-input {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  color: var(--text-1);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  padding: 16px;
-  width: 100%;
-  min-height: 220px;
-  resize: vertical;
-  transition: var(--transition);
-  outline: none;
-  line-height: 1.7;
-}
- 
-.json-input:focus { border-color: var(--accent); }
- 
-/* CSV UPLOAD */
-.upload-zone {
-  border: 1px dashed var(--border-md);
-  border-radius: var(--radius-lg);
-  padding: 48px 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: var(--transition);
-}
- 
-.upload-zone:hover { border-color: var(--grad-b); background: rgba(59,130,246,0.06); }
- 
-.upload-zone.drag-over { border-color: var(--grad-b); background: rgba(59,130,246,0.12); }
- 
-.upload-icon {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 16px;
-  border: 1px solid var(--border-md);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
- 
-.upload-title { font-size: 14px; color: var(--text-1); margin-bottom: 6px; }
-.upload-sub { font-size: 12px; color: var(--text-2); }
- 
-.data-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding: 16px 24px;
-  border-top: 1px solid var(--border);
-}
- 
-.btn-secondary {
-  height: 36px;
-  padding: 0 16px;
-  background: none;
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius);
-  color: var(--text-2);
-  font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
-  transition: var(--transition);
-}
- 
-.btn-secondary:hover { border-color: var(--border-hi); color: var(--text-1); }
- 
-.btn-primary {
-  height: 36px;
-  padding: 0 20px;
-  background: linear-gradient(105deg, var(--grad-a) 0%, var(--grad-b) 100%);
-  border: none;
-  border-radius: var(--radius);
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 0 2px 14px rgba(59,130,246,0.28);
-}
- 
-.btn-primary:hover { opacity: 0.88; box-shadow: 0 4px 20px rgba(59,130,246,0.40); }
-.btn-primary:disabled { background: var(--bg-card-2); color: var(--text-3); cursor: not-allowed; box-shadow: none; }
- 
-/* ─── RECOMMENDATIONS ─── */
-.recs-section { }
- 
-.recs-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
- 
-.recs-title {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.3px;
-}
- 
-.recs-meta {
-  font-size: 12px;
-  color: var(--text-2);
-  font-family: var(--font-mono);
-}
- 
-.recs-empty {
-  padding: 80px 24px;
-  text-align: center;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-}
- 
-.recs-empty-title {
-  font-size: 16px;
-  color: var(--text-2);
-  margin-bottom: 8px;
-  font-family: var(--font-display);
-}
- 
-.recs-empty-sub { font-size: 13px; color: var(--text-3); }
- 
-.recs-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
- 
-/* RECOMMENDATION CARD */
-.rec-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 24px;
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-  animation: fadeSlideUp 0.35s cubic-bezier(0.4,0,0.2,1) both;
-}
- 
-.rec-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-}
- 
-.rec-card.impact-high::before { background: linear-gradient(90deg, transparent, var(--high), transparent); }
-.rec-card.impact-medium::before { background: linear-gradient(90deg, transparent, var(--medium), transparent); }
-.rec-card.impact-low::before { background: linear-gradient(90deg, transparent, var(--low), transparent); }
- 
-.rec-card:hover {
-  border-color: var(--border-md);
-  background: var(--bg-card-2);
-  transform: translateY(-2px);
-}
- 
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
- 
-.rec-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
- 
-.rec-impact {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  padding: 4px 9px;
-  border-radius: 4px;
-}
- 
-.rec-impact.high { color: var(--high); background: var(--high-dim); }
-.rec-impact.medium { color: var(--medium); background: var(--medium-dim); }
-.rec-impact.low { color: var(--low); background: var(--low-dim); }
- 
-.rec-impact-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-}
- 
-.rec-priority {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-3);
-  letter-spacing: 0.5px;
-}
- 
-.rec-title {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-1);
-  letter-spacing: -0.2px;
-  margin-bottom: 10px;
-  line-height: 1.3;
-}
- 
-.rec-reason {
-  font-size: 13px;
-  color: var(--text-2);
-  line-height: 1.6;
-  margin-bottom: 18px;
-}
- 
-.rec-divider {
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 16px;
-}
- 
-.rec-action-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-3);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
- 
-.rec-action {
-  font-size: 13px;
-  color: var(--accent);
-  line-height: 1.5;
-  font-weight: 500;
-}
- 
-/* FEATURED REC (first card spans full width) */
-.rec-card.featured {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
- 
-.rec-card.featured .rec-content { }
-.rec-card.featured .rec-action-block {
-  border-left: 1px solid var(--border);
-  padding-left: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
- 
-.rec-card.featured .rec-title { font-size: 20px; }
- 
-/* FILTER BAR */
-.filter-bar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
- 
-.filter-btn {
-  height: 28px;
-  padding: 0 12px;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-2);
-  font-size: 11px;
-  font-family: var(--font-mono);
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: var(--transition);
-}
- 
-.filter-btn:hover { border-color: var(--border-md); color: var(--text-1); }
-.filter-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
- 
-/* STATUS BAR */
-.status-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 28px;
-  padding: 12px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  font-size: 13px;
-  color: var(--text-2);
-}
- 
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  flex-shrink: 0;
-}
- 
-.status-dot.idle { background: var(--text-3); }
- 
-.status-strategy {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--accent);
-  background: var(--accent-dim);
-  padding: 3px 8px;
-  border-radius: 4px;
-}
- 
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
- 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .strategy-grid { grid-template-columns: repeat(2, 1fr); }
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-  .recs-grid { grid-template-columns: 1fr; }
-  .rec-card.featured { grid-template-columns: 1fr; }
-  .rec-card.featured .rec-action-block { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 20px; }
-  main { padding: 32px 20px 60px; }
-  nav { padding: 0 20px; }
-  .input-grid { grid-template-columns: 1fr; }
-}
- 
-@media (max-width: 600px) {
-  .strategy-grid { grid-template-columns: 1fr 1fr; }
-  .kpi-grid { grid-template-columns: 1fr 1fr; }
-  .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+@media(max-width:600px){
+  .strat-grid{grid-template-columns:1fr 1fr}
+  .field-grid{grid-template-columns:1fr}
+  .nav-badge{display:none}
 }
 </style>
 </head>
 <body>
 <div class="app">
- 
-<!-- NAV -->
+
 <nav>
   <div class="nav-logo">
-    <svg width="30" height="26" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+    <svg width="30" height="26" viewBox="0 0 30 26" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
       <defs>
-        <linearGradient id="strip1" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#1a3a72"/>
-          <stop offset="100%" stop-color="#3a6fd8"/>
-        </linearGradient>
-        <linearGradient id="strip2" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#2a52b0"/>
-          <stop offset="100%" stop-color="#5b9ef5"/>
-        </linearGradient>
-        <linearGradient id="strip3" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#4a80e0"/>
-          <stop offset="100%" stop-color="#a8d0ff"/>
-        </linearGradient>
+        <linearGradient id="s1" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#1a3a72"/><stop offset="100%" stop-color="#3a6fd8"/></linearGradient>
+        <linearGradient id="s2" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2a52b0"/><stop offset="100%" stop-color="#5b9ef5"/></linearGradient>
+        <linearGradient id="s3" x1="0" y1="26" x2="8" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4a80e0"/><stop offset="100%" stop-color="#a8d0ff"/></linearGradient>
       </defs>
-      <!-- left strip: shortest, darkest -->
-      <polygon points="4,26 8,26 12,10 8,10" fill="url(#strip1)"/>
-      <!-- middle strip -->
-      <polygon points="10,26 14,26 18,4 14,4" fill="url(#strip2)"/>
-      <!-- right strip: tallest, lightest -->
-      <polygon points="16,26 20,26 24,0 20,0" fill="url(#strip3)"/>
+      <polygon points="4,26 8,26 12,10 8,10" fill="url(#s1)"/>
+      <polygon points="10,26 14,26 18,4 14,4" fill="url(#s2)"/>
+      <polygon points="16,26 20,26 24,0 20,0" fill="url(#s3)"/>
     </svg>
     Alfred AI
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('p1',this)">Data Input</button>
+    <button class="nav-tab" onclick="showPage('p2',this)">Results</button>
   </div>
   <div class="nav-right">
     <span class="nav-badge">ANALYTICS v2.1</span>
     <button class="btn-demo" onclick="runDemo()">Run Demo</button>
   </div>
 </nav>
- 
+
+<!-- PAGE 1 -->
+<div class="page active" id="p1">
 <main>
- 
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div>
-      <div class="page-title">Business Intelligence</div>
-      <div class="page-sub">Rule-based analytics and strategic recommendations for e-commerce operations.</div>
-    </div>
+  <div class="p1-header">
+    <div class="p1-title">Business Intelligence Dashboard</div>
+    <div class="p1-sub">Agentic AI for analyzing customer behavior, sales patterns, and strategic growth opportunities.</div>
   </div>
- 
-  <!-- STRATEGY SELECTOR -->
-  <div class="strategy-section">
-    <div class="section-label">Active Strategy</div>
-    <div class="strategy-grid" id="strategyGrid">
-      <button class="strategy-btn active" data-strategy="balanced" onclick="setStrategy('balanced',this)">
-        <div class="strategy-active-label">Active</div>
-        <div class="strategy-indicator"></div>
-        <div class="strategy-name">Balanced</div>
-        <div class="strategy-desc">Steady, risk-adjusted recommendations across all dimensions.</div>
+
+  <div class="strat-section">
+    <div class="sec-label">Active Strategy</div>
+    <div class="strat-grid">
+      <button class="strat-btn active" onclick="setStrategy('balanced',this)">
+        <div class="strat-top"><div class="strat-dot"></div><div class="strat-pill">Active</div></div>
+        <div class="strat-name">Balanced</div>
+        <div class="strat-desc">Steady, risk-adjusted recommendations across revenue, margin, and inventory dimensions.</div>
+        <div class="strat-tag">LOW RISK</div>
       </button>
-      <button class="strategy-btn" data-strategy="profit_max" onclick="setStrategy('profit_max',this)">
-        <div class="strategy-active-label">Active</div>
-        <div class="strategy-indicator"></div>
-        <div class="strategy-name">Profit Max</div>
-        <div class="strategy-desc">Prioritize margins and long-term profitability over volume.</div>
+      <button class="strat-btn" onclick="setStrategy('profit_max',this)">
+        <div class="strat-top"><div class="strat-dot"></div><div class="strat-pill">Active</div></div>
+        <div class="strat-name">Profit Max</div>
+        <div class="strat-desc">Prioritize margins and long-term profitability. Raise prices where demand supports it.</div>
+        <div class="strat-tag">MARGIN FOCUS</div>
       </button>
-      <button class="strategy-btn" data-strategy="inventory" onclick="setStrategy('inventory',this)">
-        <div class="strategy-active-label">Active</div>
-        <div class="strategy-indicator"></div>
-        <div class="strategy-name">Inventory</div>
-        <div class="strategy-desc">Clear excess stock and prevent stockouts at critical SKUs.</div>
+      <button class="strat-btn" onclick="setStrategy('inventory',this)">
+        <div class="strat-top"><div class="strat-dot"></div><div class="strat-pill">Active</div></div>
+        <div class="strat-name">Inventory</div>
+        <div class="strat-desc">Clear excess stock, prevent stockouts at critical SKUs, and optimize working capital.</div>
+        <div class="strat-tag">STOCK FIRST</div>
       </button>
-      <button class="strategy-btn" data-strategy="revenue_max" onclick="setStrategy('revenue_max',this)">
-        <div class="strategy-active-label">Active</div>
-        <div class="strategy-indicator"></div>
-        <div class="strategy-name">Revenue Max</div>
-        <div class="strategy-desc">Maximize top-line volume through competitive pricing and velocity.</div>
+      <button class="strat-btn" onclick="setStrategy('revenue_max',this)">
+        <div class="strat-top"><div class="strat-dot"></div><div class="strat-pill">Active</div></div>
+        <div class="strat-name">Revenue Max</div>
+        <div class="strat-desc">Maximize top-line volume through competitive pricing, velocity, and customer acquisition.</div>
+        <div class="strat-tag">VOLUME FIRST</div>
       </button>
     </div>
   </div>
- 
-  <!-- KPI CARDS -->
-  <div class="kpi-section">
-    <div class="section-label">Business Metrics</div>
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Revenue</div>
-        <div class="kpi-value" id="kpi-revenue">--</div>
-        <div class="kpi-delta" id="kpi-revenue-d"><span class="delta-arrow">--</span> no data</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Orders</div>
-        <div class="kpi-value" id="kpi-orders">--</div>
-        <div class="kpi-delta" id="kpi-orders-d"><span class="delta-arrow">--</span> no data</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Conversion Rate</div>
-        <div class="kpi-value" id="kpi-cvr">--</div>
-        <div class="kpi-delta" id="kpi-cvr-d"><span class="delta-arrow">--</span> no data</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Avg. Order Value</div>
-        <div class="kpi-value" id="kpi-aov">--</div>
-        <div class="kpi-delta" id="kpi-aov-d"><span class="delta-arrow">--</span> no data</div>
-      </div>
-    </div>
-  </div>
- 
-  <!-- DATA INPUT -->
-  <div class="data-section">
-    <div class="section-label">Data Input</div>
-    <div class="data-panel">
-      <div class="data-tabs">
-        <button class="data-tab active" onclick="switchTab('manual',this)">Manual Input</button>
-        <button class="data-tab" onclick="switchTab('json',this)">JSON</button>
-        <button class="data-tab" onclick="switchTab('csv',this)">CSV Upload</button>
-      </div>
- 
-      <!-- MANUAL TAB -->
-      <div class="tab-pane active" id="tab-manual">
-        <div class="input-grid">
-          <div class="input-group">
-            <label class="input-label">Revenue ($)</label>
-            <input class="input-field" type="number" id="m-revenue" placeholder="e.g. 142500" />
-          </div>
-          <div class="input-group">
-            <label class="input-label">Orders (count)</label>
-            <input class="input-field" type="number" id="m-orders" placeholder="e.g. 1240" />
-          </div>
-          <div class="input-group">
-            <label class="input-label">Conversion Rate (%)</label>
-            <input class="input-field" type="number" id="m-cvr" placeholder="e.g. 2.4" step="0.1" />
-          </div>
-          <div class="input-group">
-            <label class="input-label">Avg. Order Value ($)</label>
-            <input class="input-field" type="number" id="m-aov" placeholder="e.g. 115" />
-          </div>
-        </div>
- 
-        <div class="product-section">
-          <div class="product-section-title">Product Catalog</div>
-          <table class="product-table">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Sales (units)</th>
-                <th>Stock (units)</th>
-                <th>Margin (%)</th>
-              </tr>
-            </thead>
-            <tbody id="productTableBody"></tbody>
-          </table>
-          <button class="add-product-btn" onclick="addProductRow()">+ Add product</button>
+
+  <!-- Row 1 -->
+  <div class="panels-row">
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Business Metrics</div><div class="panel-sub">Core revenue and conversion data</div></div>
+      <div class="panel-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Revenue ($)</label><input class="finput" type="number" id="m-revenue" placeholder="e.g. 142500"/></div>
+          <div class="field"><label class="field-label">Orders (count)</label><input class="finput" type="number" id="m-orders" placeholder="e.g. 1240"/></div>
+          <div class="field"><label class="field-label">Conversion Rate (%)</label><input class="finput" type="number" id="m-cvr" placeholder="e.g. 2.4" step="0.1"/></div>
+          <div class="field"><label class="field-label">Avg. Order Value ($)</label><input class="finput" type="number" id="m-aov" placeholder="e.g. 115"/></div>
         </div>
       </div>
- 
-      <!-- JSON TAB -->
-      <div class="tab-pane" id="tab-json">
-        <div class="input-group" style="margin-bottom:16px;">
-          <label class="input-label">Paste JSON dataset</label>
-          <textarea class="json-input" id="jsonInput" placeholder='{
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Customer Interaction Metrics</div><div class="panel-sub">Behavioral and engagement signals</div></div>
+      <div class="panel-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Session Duration (mins)</label><input class="finput" type="number" id="m-session" placeholder="e.g. 3.2" step="0.1"/></div>
+          <div class="field"><label class="field-label">Bounce Rate (%)</label><input class="finput" type="number" id="m-bounce" placeholder="e.g. 58" step="0.1"/></div>
+          <div class="field"><label class="field-label">Repeat Purchase Rate (%)</label><input class="finput" type="number" id="m-repeat" placeholder="e.g. 22" step="0.1"/></div>
+          <div class="field"><label class="field-label">Cart Abandonment (%)</label><input class="finput" type="number" id="m-abandon" placeholder="e.g. 68" step="0.1"/></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="panels-row">
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Sales Volume</div><div class="panel-sub">Monthly and weekly velocity</div></div>
+      <div class="panel-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Monthly Units Sold</label><input class="finput" type="number" id="m-units" placeholder="e.g. 3200"/></div>
+          <div class="field"><label class="field-label">Weekly Growth Rate (%)</label><input class="finput" type="number" id="m-growth" placeholder="e.g. 4.2" step="0.1"/></div>
+          <div class="field"><label class="field-label">Refund / Return Rate (%)</label><input class="finput" type="number" id="m-refund" placeholder="e.g. 3.1" step="0.1"/></div>
+          <div class="field"><label class="field-label">New Customer Ratio (%)</label><input class="finput" type="number" id="m-newcust" placeholder="e.g. 65" step="0.1"/></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><div class="panel-title">Inventory Levels</div><div class="panel-sub">Warehouse and supply chain health</div></div>
+      <div class="panel-body">
+        <div class="field-grid">
+          <div class="field"><label class="field-label">Total Active SKUs</label><input class="finput" type="number" id="m-skus" placeholder="e.g. 48"/></div>
+          <div class="field"><label class="field-label">Avg. Days of Stock</label><input class="finput" type="number" id="m-daysstock" placeholder="e.g. 42"/></div>
+          <div class="field"><label class="field-label">Stockout Events (monthly)</label><input class="finput" type="number" id="m-stockouts" placeholder="e.g. 3"/></div>
+          <div class="field"><label class="field-label">Overstock SKUs (count)</label><input class="finput" type="number" id="m-overstock" placeholder="e.g. 7"/></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product table -->
+  <div class="panel-full">
+    <div class="panel-head" style="padding:20px 24px 16px">
+      <div class="panel-title">Product Catalog</div>
+      <div class="panel-sub">Individual SKU data — price, sales volume, stock, margin, and customer ratings</div>
+    </div>
+    <div class="dtabs">
+      <button class="dtab active" onclick="switchDTab('manual',this)">Manual Entry</button>
+      <button class="dtab" onclick="switchDTab('json',this)">JSON Import</button>
+      <button class="dtab" onclick="switchDTab('csv',this)">CSV Upload</button>
+    </div>
+    <div class="tabpane active" id="dtab-manual">
+      <div class="ptable-wrap">
+        <table class="ptable">
+          <thead><tr>
+            <th>Product Name</th><th>Price ($)</th><th>Sales (units/mo)</th>
+            <th>Stock (units)</th><th>Margin (%)</th><th>Customer Rating</th><th></th>
+          </tr></thead>
+          <tbody id="ptbody"></tbody>
+        </table>
+      </div>
+      <div class="table-actions"><button class="add-row-btn" onclick="addRow()">+ Add product</button></div>
+    </div>
+    <div class="tabpane" id="dtab-json">
+      <textarea class="json-ta" id="jsonInput" placeholder='{
   "metrics": {
-    "revenue": 142500,
-    "orders": 1240,
-    "conversionRate": 2.4,
-    "avgOrderValue": 115
+    "revenue": 142500, "orders": 1240, "conversionRate": 2.4, "avgOrderValue": 115,
+    "sessionDuration": 3.2, "bounceRate": 58, "repeatPurchaseRate": 22, "cartAbandonment": 68
   },
   "products": [
-    { "name": "Product A", "sales": 320, "stock": 12, "margin": 48 },
-    { "name": "Product B", "sales": 85, "stock": 310, "margin": 22 }
+    { "name": "Wireless Headphones", "price": 89, "sales": 320, "stock": 12, "margin": 48, "rating": 4.6 }
   ]
 }'></textarea>
+    </div>
+    <div class="tabpane" id="dtab-csv">
+      <div class="upload-zone" id="uploadZone"
+           ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"
+           onclick="document.getElementById('csvFile').click()">
+        <div class="uicon">
+          <svg width="18" height="18" fill="none" stroke="#6690b8" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
         </div>
+        <div class="utitle">Drop CSV here or click to browse</div>
+        <div class="usub">Columns: name, price, sales, stock, margin, rating</div>
+        <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSVFile(event)"/>
       </div>
- 
-      <!-- CSV TAB -->
-      <div class="tab-pane" id="tab-csv">
-        <div class="upload-zone" id="uploadZone"
-             ondragover="handleDragOver(event)"
-             ondragleave="handleDragLeave(event)"
-             ondrop="handleDrop(event)"
-             onclick="document.getElementById('csvFileInput').click()">
-          <div class="upload-icon">
-            <svg width="18" height="18" fill="none" stroke="#6b7a99" stroke-width="1.5" viewBox="0 0 24 24">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-              <polyline points="17 8 12 3 7 8"/>
-              <line x1="12" y1="3" x2="12" y2="15"/>
-            </svg>
-          </div>
-          <div class="upload-title">Drop your CSV here or click to browse</div>
-          <div class="upload-sub">Expected columns: name, sales, stock, margin</div>
-          <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="handleCSVFile(event)" />
-        </div>
-        <div id="csvStatus" style="margin-top:12px;font-size:12px;color:var(--text-2);font-family:var(--font-mono);"></div>
-      </div>
- 
-      <div class="data-actions">
-        <button class="btn-secondary" onclick="clearAll()">Clear</button>
-        <button class="btn-primary" id="analyzeBtn" onclick="runAnalysis()">Run Analysis</button>
-      </div>
+      <div id="csvStatus" style="padding:0 24px 16px;font-size:12px;color:var(--t2);font-family:var(--fm)"></div>
     </div>
   </div>
- 
-  <!-- STATUS BAR -->
-  <div class="status-bar" id="statusBar">
-    <div class="status-dot idle" id="statusDot"></div>
-    <span id="statusText">Ready to analyze. Load data and select a strategy.</span>
-    <span class="status-strategy" id="statusStrategy">BALANCED</span>
+
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <button class="btn-sec" onclick="clearAll()">Clear All</button>
+      <button class="btn-sec" onclick="runDemo()">Load Demo</button>
+    </div>
+    <button class="btn-pri" onclick="runAnalysis()">Run Analysis &rarr;</button>
   </div>
- 
-  <!-- RECOMMENDATIONS -->
-  <div class="recs-section">
-    <div class="recs-header">
-      <div class="recs-title">Recommendations</div>
-      <div class="recs-meta" id="recsMeta"></div>
-    </div>
- 
-    <div class="filter-bar" id="filterBar" style="display:none;">
-      <button class="filter-btn active" data-filter="all" onclick="filterRecs('all',this)">All</button>
-      <button class="filter-btn" data-filter="high" onclick="filterRecs('high',this)">High Impact</button>
-      <button class="filter-btn" data-filter="medium" onclick="filterRecs('medium',this)">Medium</button>
-      <button class="filter-btn" data-filter="low" onclick="filterRecs('low',this)">Low</button>
-    </div>
- 
-    <div id="recsContainer">
-      <div class="recs-empty">
-        <div class="recs-empty-title">No analysis results yet</div>
-        <div class="recs-empty-sub">Enter your business data above and click Run Analysis, or use the demo dataset.</div>
-      </div>
-    </div>
-  </div>
- 
 </main>
 </div>
- 
+
+<!-- PAGE 2 -->
+<div class="page" id="p2">
+<main>
+  <div class="sec-label">Performance Overview</div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">Revenue</div><div class="kpi-val" id="kpi-rev">--</div><div class="kpi-delta" id="kpi-rev-d">no data</div></div>
+    <div class="kpi-card"><div class="kpi-label">Orders</div><div class="kpi-val" id="kpi-ord">--</div><div class="kpi-delta" id="kpi-ord-d">no data</div></div>
+    <div class="kpi-card"><div class="kpi-label">Conversion Rate</div><div class="kpi-val" id="kpi-cvr">--</div><div class="kpi-delta" id="kpi-cvr-d">no data</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg. Order Value</div><div class="kpi-val" id="kpi-aov">--</div><div class="kpi-delta" id="kpi-aov-d">no data</div></div>
+  </div>
+
+  <div class="sec-label">Projected Impact After Alfred AI</div>
+  <div class="graphs-row">
+    <div class="graph-card">
+      <div class="graph-head">
+        <div><div class="graph-title">Revenue Potential</div><div class="graph-sub">Current vs. 6-month projected trajectory</div></div>
+        <div style="text-align:right"><div class="graph-uplift" id="rev-uplift">--</div><div class="graph-uplift-label">projected uplift</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="revenueChart"></canvas></div>
+    </div>
+    <div class="graph-card">
+      <div class="graph-head">
+        <div><div class="graph-title">Profit Margin Improvement</div><div class="graph-sub">Margin trajectory with recommendations applied</div></div>
+        <div style="text-align:right"><div class="graph-uplift" id="margin-uplift">--</div><div class="graph-uplift-label">margin gain</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="marginChart"></canvas></div>
+    </div>
+    <div class="graph-card">
+      <div class="graph-head">
+        <div><div class="graph-title">Customer Behavior Score</div><div class="graph-sub">Engagement health across behavioral signals</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="behaviorChart"></canvas></div>
+    </div>
+    <div class="graph-card">
+      <div class="graph-head">
+        <div><div class="graph-title">Product Volume vs. Margin</div><div class="graph-sub">SKU-level sales velocity and margin distribution</div></div>
+      </div>
+      <div class="chart-wrap"><canvas id="skuChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="sdot" id="sdot"></div>
+    <span id="stext">No analysis run yet. Go to Data Input and click Run Analysis.</span>
+    <span class="sstrat" id="sstrat">BALANCED</span>
+  </div>
+
+  <div class="recs-header">
+    <div class="recs-title">Recommendations</div>
+    <div class="recs-meta" id="recs-meta"></div>
+  </div>
+  <div class="filter-bar" id="filterBar" style="display:none">
+    <button class="fbtn active" onclick="filterRecs('all',this)">All</button>
+    <button class="fbtn" onclick="filterRecs('high',this)">High Impact</button>
+    <button class="fbtn" onclick="filterRecs('medium',this)">Medium</button>
+    <button class="fbtn" onclick="filterRecs('low',this)">Low</button>
+  </div>
+  <div id="recsContainer">
+    <div class="recs-empty">
+      <div class="recs-empty-title">No results yet</div>
+      <div class="recs-empty-sub">Load your data on the input page and run analysis.</div>
+    </div>
+  </div>
+</main>
+</div>
+
+</div>
 <script>
-/* ─── STATE ─── */
-let currentStrategy = 'balanced';
-let currentData = null;
-let currentRecs = [];
-let activeFilter = 'all';
- 
-/* ─── STRATEGY CONFIG ─── */
-const STRATEGIES = {
-  balanced: {
-    label: 'BALANCED',
-    priorityOrder: ['restock','funnel','promo','discount','margin','upsell','concentration','aov'],
-    impactMultipliers: { high: 1, medium: 1, low: 1 }
-  },
-  profit_max: {
-    label: 'PROFIT MAX',
-    priorityOrder: ['margin','promo','aov','upsell','restock','funnel','discount','concentration'],
-    impactMultipliers: { high: 1, medium: 0.9, low: 0.8 },
-    suppressTypes: ['discount']
-  },
-  inventory: {
-    label: 'INVENTORY',
-    priorityOrder: ['restock','discount','concentration','margin','funnel','promo','upsell','aov'],
-    impactMultipliers: { high: 1, medium: 1, low: 0.9 }
-  },
-  revenue_max: {
-    label: 'REVENUE MAX',
-    priorityOrder: ['funnel','aov','upsell','discount','promo','restock','margin','concentration'],
-    impactMultipliers: { high: 1, medium: 1, low: 0.9 },
-    suppressTypes: ['margin']
+let currentStrategy='balanced',currentData=null,currentRecs=[],activeFilter='all';
+let rChart,mChart,bChart,sChart;
+const STRATS={
+  balanced:{label:'BALANCED',order:['restock','funnel','behavior','promo','discount','margin','upsell','concentration','aov','price']},
+  profit_max:{label:'PROFIT MAX',order:['margin','promo','aov','price','upsell','restock','funnel','behavior','discount','concentration'],suppress:['discount']},
+  inventory:{label:'INVENTORY',order:['restock','discount','concentration','margin','funnel','behavior','promo','upsell','aov','price']},
+  revenue_max:{label:'REVENUE MAX',order:['funnel','behavior','aov','upsell','discount','promo','restock','price','margin','concentration'],suppress:['margin']}
+};
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');btn.classList.add('active')
+}
+function setStrategy(s,btn){
+  currentStrategy=s;
+  document.querySelectorAll('.strat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sstrat').textContent=STRATS[s].label;
+  if(currentData){renderRecs(analyzeData(currentData,s))}
+}
+function switchDTab(name,btn){
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('dtab-'+name).classList.add('active')
+}
+function addRow(name='',price='',sales='',stock='',margin='',rating=''){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input type="text" value="${name}" placeholder="Product name"/></td>
+    <td><input type="number" value="${price}" placeholder="0" step="0.01"/></td>
+    <td><input type="number" value="${sales}" placeholder="0"/></td>
+    <td><input type="number" value="${stock}" placeholder="0"/></td>
+    <td><input type="number" value="${margin}" placeholder="0" step="0.1"/></td>
+    <td><input type="number" value="${rating}" placeholder="0.0" step="0.1" min="0" max="5"/></td>
+    <td><button onclick="this.closest('tr').remove()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:18px;line-height:1">&times;</button></td>`;
+  document.getElementById('ptbody').appendChild(tr)
+}
+function getManualData(){
+  const g=id=>{const el=document.getElementById(id);return el?parseFloat(el.value)||null:null};
+  const metrics={
+    revenue:g('m-revenue'),orders:parseInt(document.getElementById('m-orders').value)||null,
+    conversionRate:g('m-cvr'),avgOrderValue:g('m-aov'),
+    sessionDuration:g('m-session'),bounceRate:g('m-bounce'),
+    repeatPurchaseRate:g('m-repeat'),cartAbandonment:g('m-abandon'),
+    monthlyUnits:g('m-units'),weeklyGrowth:g('m-growth'),
+    refundRate:g('m-refund'),newCustomerRatio:g('m-newcust'),
+    totalSKUs:g('m-skus'),daysOfStock:g('m-daysstock'),
+    stockoutEvents:g('m-stockouts'),overstockSKUs:g('m-overstock')
+  };
+  const products=[];
+  document.querySelectorAll('#ptbody tr').forEach(row=>{
+    const inp=row.querySelectorAll('input');const name=inp[0].value.trim();if(!name)return;
+    products.push({name,price:parseFloat(inp[1].value)||0,sales:parseFloat(inp[2].value)||0,stock:parseFloat(inp[3].value)||0,margin:parseFloat(inp[4].value)||0,rating:parseFloat(inp[5].value)||0})
+  });
+  return{metrics,products}
+}
+function analyzeData(data,strategy){
+  const{metrics:m,products:prods}=data;
+  const cfg=STRATS[strategy];const recs=[];
+  prods.forEach(p=>{
+    if(p.stock<20&&p.sales>50)recs.push({type:'restock',impact:p.stock<10?'high':'medium',
+      title:strategy==='inventory'?`Critical Restock: ${p.name}`:strategy==='profit_max'?`Protect ${p.name} Revenue Stream`:strategy==='revenue_max'?`Unlock ${p.name} Growth Capacity`:`Restock ${p.name} Before Stockout`,
+      reason:`${p.name} is moving ${p.sales} units/month with only ${p.stock} left. At current velocity, stockout is imminent.`,
+      action:strategy==='profit_max'?`Negotiate a bulk reorder at favorable unit cost — secure 90-day supply while protecting margin.`:strategy==='revenue_max'?`Maximize reorder quantity to capture full demand. Consider pre-selling while stock is inbound.`:`Issue a reorder for ${p.name} targeting a 60-day buffer. Set automated reorder triggers at 20 units.`})
+  });
+  prods.forEach(p=>{
+    const wks=p.sales>0?(p.stock/(p.sales/4)).toFixed(1):99;
+    if(p.stock>80&&p.sales<30)recs.push({type:'discount',impact:p.stock>150?'high':'medium',
+      title:strategy==='inventory'?`Liquidate Excess ${p.name}`:strategy==='revenue_max'?`Deploy ${p.name} as Traffic Driver`:`Reduce ${p.name} Overstock`,
+      reason:`${p.name} has ${p.stock} units with only ${p.sales} monthly sales (~${wks} weeks of supply). Capital is tied in slow-moving inventory.`,
+      action:strategy==='inventory'?`Apply a 20-30% markdown immediately. Bundle with a complementary SKU to move volume.`:strategy==='profit_max'?`Test bundling before discounting. Evaluate whether this SKU should remain in the catalog.`:`Run a 15-20% time-limited promotion to reduce stock to a 4-week supply.`})
+  });
+  if(m.conversionRate&&m.conversionRate<2.5)recs.push({type:'funnel',impact:m.conversionRate<1.5?'high':'medium',
+    title:strategy==='revenue_max'?`Conversion Rate Is Your Largest Revenue Lever`:`Address Conversion Rate Underperformance`,
+    reason:`Your CVR of ${m.conversionRate}% is below the 2.5-3.5% e-commerce benchmark. Revenue is being lost from existing traffic.`,
+    action:strategy==='revenue_max'?`Prioritize CVR optimization above all else. A 1% lift at your traffic volume is a direct revenue multiplier. A/B test checkout, product pages, and CTAs this week.`:`Audit the full funnel: product page to checkout. Focus on mobile UX, trust signals, and page load speed.`});
+  if(m.cartAbandonment&&m.cartAbandonment>65)recs.push({type:'behavior',impact:m.cartAbandonment>75?'high':'medium',
+    title:'High Cart Abandonment Signals Checkout Friction',
+    reason:`A ${m.cartAbandonment}% cart abandonment rate means ${Math.round(m.cartAbandonment)} of every 100 shoppers who add to cart do not complete purchase.`,
+    action:`Implement exit-intent cart recovery emails, streamline checkout to under 3 steps, add trust badges, and enable guest checkout. Target a 15-point reduction in 60 days.`});
+  if(m.bounceRate&&m.bounceRate>60)recs.push({type:'behavior',impact:'medium',
+    title:'Bounce Rate Indicates Landing Page Misalignment',
+    reason:`At ${m.bounceRate}% bounce rate, the majority of visitors leave without engaging. This signals a disconnect between ad messaging and landing page content.`,
+    action:`Audit top landing pages for message match, load speed (target under 2s), and above-fold clarity. Run A/B tests on hero copy and primary CTA placement.`});
+  if(m.repeatPurchaseRate&&m.repeatPurchaseRate<25)recs.push({type:'behavior',impact:'medium',
+    title:'Low Repeat Purchase Rate Limits Customer Lifetime Value',
+    reason:`Only ${m.repeatPurchaseRate}% of customers return for a second purchase. Acquiring new customers costs 5-7x more than retaining existing ones.`,
+    action:strategy==='revenue_max'?`Launch a post-purchase email sequence and loyalty program. Each 5% improvement in repeat rate compounds significantly on LTV.`:`Introduce a VIP loyalty tier and 30-day post-purchase reactivation campaign. Survey customers on satisfaction blockers.`});
+  prods.forEach(p=>{
+    if(p.margin>45&&p.sales<40)recs.push({type:'promo',impact:'medium',
+      title:strategy==='profit_max'?`Activate High-Margin ${p.name} With Targeted Campaign`:`Promote ${p.name} — High Margin, Low Exposure`,
+      reason:`${p.name} carries a ${p.margin}% margin but only ${p.sales} units/month. This is an underutilized high-value asset.`,
+      action:strategy==='profit_max'?`Invest in a focused paid campaign. At ${p.margin}% margin, CAC below $${(p.margin*0.4).toFixed(0)} remains profitable.`:`Allocate test budget to email and paid channels. The ${p.margin}% margin provides room to invest in demand generation.`})
+  });
+  prods.forEach(p=>{
+    if(p.margin<20&&p.sales>60)recs.push({type:'margin',impact:p.margin<12?'high':'medium',
+      title:strategy==='profit_max'?`${p.name} Margin Is Critically Thin — Act Now`:`Improve ${p.name} Margin or Reassess Viability`,
+      reason:`${p.name} drives ${p.sales} units/month at only ${p.margin}% margin. High velocity at thin margins creates cash flow fragility.`,
+      action:strategy==='profit_max'?`Raise pricing by 8-12% and test elasticity. Renegotiate supplier terms simultaneously.`:`Evaluate COGS — test a modest price increase and explore volume discounts with suppliers.`})
+  });
+  prods.forEach(p=>{
+    if(p.rating>0&&p.rating<3.8&&p.sales>20)recs.push({type:'behavior',impact:'medium',
+      title:`${p.name} Rating Is Suppressing Organic Conversion`,
+      reason:`A ${p.rating.toFixed(1)} star rating is below the 3.8 threshold that significantly impacts purchase confidence and marketplace algorithm ranking.`,
+      action:`Identify the root cause via review analysis. Prioritize product improvements, then launch a post-purchase review request campaign.`})
+  });
+  prods.forEach(p=>{
+    if(p.price>0&&p.margin>40&&p.sales>100)recs.push({type:'price',impact:'low',
+      title:strategy==='profit_max'?`Test a Price Increase on ${p.name}`:`Monitor ${p.name} Price-to-Volume Sensitivity`,
+      reason:`${p.name} has strong demand (${p.sales} units) and a ${p.margin}% margin at $${p.price}. There may be pricing headroom to explore.`,
+      action:strategy==='profit_max'?`Run a 10% price increase A/B test. If volume drops less than 8%, the margin improvement is net-positive.`:`Track weekly velocity. Organic demand growth signals upward pricing headroom.`})
+  });
+  if(m.avgOrderValue&&m.avgOrderValue<80)recs.push({type:'upsell',impact:'medium',
+    title:`Increase Average Order Value Through Cross-Sell`,
+    reason:`AOV of $${m.avgOrderValue} suggests limited bundle or cross-sell adoption. Each AOV dollar gained flows directly to revenue at zero acquisition cost.`,
+    action:strategy==='revenue_max'?`Implement cart-level upsell prompts. A $15 AOV lift on ${m.orders||0} orders adds $${((15*(m.orders||0))).toLocaleString()} in revenue with no new traffic needed.`:`Introduce frequently-bought-together recommendations and a bundle builder. Target a 20% AOV lift in 60 days.`});
+  const totalSales=prods.reduce((s,p)=>s+p.sales,0);
+  prods.forEach(p=>{
+    const share=totalSales>0?(p.sales/totalSales*100).toFixed(1):0;
+    if(share>55)recs.push({type:'concentration',impact:'high',
+      title:'Revenue Concentration Risk Detected',
+      reason:`${p.name} accounts for ${share}% of total unit volume. Single-SKU dependency creates significant operational and demand risk.`,
+      action:strategy==='revenue_max'?`Accelerate catalog expansion into adjacent categories where ${p.name} customers have shown demand.`:`Set a target to reduce ${p.name} share from ${share}% to below 40% over two quarters via adjacency expansion.`})
+  });
+  if(m.stockoutEvents&&m.stockoutEvents>2)recs.push({type:'restock',impact:'high',
+    title:'Recurring Stockouts Are Costing Revenue Daily',
+    reason:`${m.stockoutEvents} stockout events per month indicates systemic inventory planning failure. Each stockout permanently loses a sale.`,
+    action:`Implement demand forecasting based on 90-day velocity trends. Set safety stock thresholds per SKU class and automate reorder triggers.`});
+  const suppressed=cfg.suppress||[];
+  const filtered=recs.filter(r=>!suppressed.includes(r.type));
+  filtered.sort((a,b)=>{
+    const ai=cfg.order.indexOf(a.type),bi=cfg.order.indexOf(b.type);
+    const ap=ai===-1?99:ai,bp=bi===-1?99:bi;
+    if(ap!==bp)return ap-bp;
+    return{high:0,medium:1,low:2}[a.impact]-{high:0,medium:1,low:2}[b.impact]
+  });
+  return filtered
+}
+
+const CD={
+  responsive:true,maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{backgroundColor:'#0a2240',borderColor:'rgba(91,155,240,0.2)',borderWidth:1,titleColor:'#ddeeff',bodyColor:'#6690b8',padding:10}},
+  scales:{
+    x:{grid:{color:'rgba(91,155,240,0.06)'},ticks:{color:'#6690b8',font:{size:11}},border:{display:false}},
+    y:{grid:{color:'rgba(91,155,240,0.06)'},ticks:{color:'#6690b8',font:{size:11}},border:{display:false}}
   }
 };
- 
-/* ─── RULE ENGINE ─── */
-function analyzeData(data, strategy) {
-  const { metrics, products } = data;
-  const cfg = STRATEGIES[strategy];
-  const recs = [];
- 
-  // Rule 1: Low stock + high sales → Restock
-  products.forEach(p => {
-    if (p.stock < 20 && p.sales > 50) {
-      recs.push({
-        type: 'restock',
-        impact: p.stock < 10 ? 'high' : 'medium',
-        title: stockoutTitle(strategy, p),
-        reason: `${p.name} is moving ${p.sales} units with only ${p.stock} remaining in stock. At current velocity, stockout is imminent.`,
-        action: restockAction(strategy, p),
-        product: p.name
-      });
-    }
-  });
- 
-  // Rule 2: High stock + low sales → Discount / clearance
-  products.forEach(p => {
-    const weeksOfStock = p.sales > 0 ? (p.stock / (p.sales / 4)).toFixed(1) : 99;
-    if (p.stock > 80 && p.sales < 30) {
-      recs.push({
-        type: 'discount',
-        impact: p.stock > 150 ? 'high' : 'medium',
-        title: discountTitle(strategy, p),
-        reason: `${p.name} carries ${p.stock} units with only ${p.sales} monthly sales (~${weeksOfStock} weeks of supply). Capital tied in slow-moving inventory.`,
-        action: discountAction(strategy, p),
-        product: p.name
-      });
-    }
-  });
- 
-  // Rule 3: Low conversion rate → Funnel/UX issue
-  if (metrics.conversionRate < 2.5) {
-    const severity = metrics.conversionRate < 1.5 ? 'high' : 'medium';
-    recs.push({
-      type: 'funnel',
-      impact: severity,
-      title: funnelTitle(strategy, metrics),
-      reason: `Your conversion rate of ${metrics.conversionRate}% is ${metrics.conversionRate < 1.5 ? 'critically below' : 'below'} the e-commerce benchmark of 2.5–3.5%. Revenue is being left on the table from existing traffic.`,
-      action: funnelAction(strategy, metrics)
-    });
+const LEG={...CD.plugins,legend:{display:true,labels:{color:'#6690b8',font:{size:11},boxWidth:12,padding:14}}};
+
+function buildCharts(data){
+  [rChart,mChart,bChart,sChart].forEach(c=>{if(c)c.destroy()});
+  const m=data.metrics,prods=data.products;
+  const months=['Now','Mo 1','Mo 2','Mo 3','Mo 4','Mo 5','Mo 6'];
+  const rev=m.revenue||120000;
+  const uplift=currentStrategy==='revenue_max'?0.28:currentStrategy==='profit_max'?0.18:currentStrategy==='inventory'?0.14:0.20;
+  const revCurr=months.map((_,i)=>Math.round(rev*(1+0.015*i)));
+  const revProj=months.map((_,i)=>Math.round(rev*(1+(uplift/6)*i+0.012*i)));
+  document.getElementById('rev-uplift').textContent='+'+Math.round(uplift*100)+'%';
+  const rc=document.getElementById('revenueChart').getContext('2d');
+  const rg=rc.createLinearGradient(0,0,0,190);rg.addColorStop(0,'rgba(77,143,255,0.25)');rg.addColorStop(1,'rgba(77,143,255,0)');
+  const rg2=rc.createLinearGradient(0,0,0,190);rg2.addColorStop(0,'rgba(62,207,142,0.22)');rg2.addColorStop(1,'rgba(62,207,142,0)');
+  rChart=new Chart(rc,{type:'line',data:{labels:months,datasets:[
+    {label:'Current',data:revCurr,borderColor:'rgba(77,143,255,0.55)',borderWidth:1.5,backgroundColor:rg,fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'rgba(77,143,255,0.8)'},
+    {label:'With Alfred AI',data:revProj,borderColor:'#3ecf8e',borderWidth:2,backgroundColor:rg2,fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#3ecf8e'}
+  ]},options:{...CD,plugins:LEG}});
+
+  const baseMargin=prods.length?(prods.reduce((s,p)=>s+p.margin,0)/prods.length):32;
+  const mUplift=currentStrategy==='profit_max'?8:currentStrategy==='balanced'?5:currentStrategy==='inventory'?3:4;
+  const mCurr=months.map((_,i)=>+(baseMargin+i*0.3).toFixed(1));
+  const mProj=months.map((_,i)=>+(baseMargin+(mUplift/6)*i+i*0.2).toFixed(1));
+  document.getElementById('margin-uplift').textContent='+'+mUplift+'pts';
+  const mc=document.getElementById('marginChart').getContext('2d');
+  const mg=mc.createLinearGradient(0,0,0,190);mg.addColorStop(0,'rgba(245,166,35,0.22)');mg.addColorStop(1,'rgba(245,166,35,0)');
+  mChart=new Chart(mc,{type:'line',data:{labels:months,datasets:[
+    {label:'Current',data:mCurr,borderColor:'rgba(77,143,255,0.55)',borderWidth:1.5,backgroundColor:'transparent',fill:false,tension:0.4,pointRadius:3,pointBackgroundColor:'rgba(77,143,255,0.8)'},
+    {label:'With Alfred AI',data:mProj,borderColor:'#f5a623',borderWidth:2,backgroundColor:mg,fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#f5a623'}
+  ]},options:{...CD,plugins:LEG}});
+
+  const bc=document.getElementById('behaviorChart').getContext('2d');
+  const sess=m.sessionDuration?Math.min(100,m.sessionDuration/6*100):55;
+  const cart=m.cartAbandonment?100-m.cartAbandonment:42;
+  const repeat=m.repeatPurchaseRate||22;
+  const cvr=m.conversionRate?Math.min(100,m.conversionRate/5*100):40;
+  const engage=m.bounceRate?100-m.bounceRate:48;
+  bChart=new Chart(bc,{type:'bar',data:{
+    labels:['Session Quality','Cart Completion','Repeat Rate','Conversion','Engagement'],
+    datasets:[
+      {label:'Current',data:[sess,cart,repeat,cvr,engage],backgroundColor:'rgba(77,143,255,0.4)',borderColor:'rgba(77,143,255,0.8)',borderWidth:1,borderRadius:4},
+      {label:'With Alfred AI',data:[sess*1.15,cart*1.2,repeat*1.25,cvr*1.18,engage*1.12].map(v=>Math.min(100,+v.toFixed(1))),backgroundColor:'rgba(62,207,142,0.35)',borderColor:'rgba(62,207,142,0.8)',borderWidth:1,borderRadius:4}
+    ]
+  },options:{...CD,indexAxis:'y',plugins:LEG,scales:{x:{...CD.scales.x,max:100},y:{...CD.scales.y}}}});
+
+  const sc=document.getElementById('skuChart').getContext('2d');
+  const skuData=prods.length?prods.slice(0,6):[{name:'Product A',sales:320,margin:48},{name:'Product B',sales:85,margin:18},{name:'Product C',sales:180,margin:38},{name:'Product D',sales:30,margin:60}];
+  sChart=new Chart(sc,{type:'bar',data:{
+    labels:skuData.map(p=>p.name.length>12?p.name.slice(0,12)+'...':p.name),
+    datasets:[
+      {label:'Sales Volume',data:skuData.map(p=>p.sales),backgroundColor:'rgba(77,143,255,0.5)',borderColor:'rgba(77,143,255,0.9)',borderWidth:1,borderRadius:4,yAxisID:'y'},
+      {label:'Margin %',data:skuData.map(p=>p.margin),backgroundColor:'rgba(245,166,35,0.0)',borderColor:'rgba(245,166,35,0.9)',borderWidth:2,type:'line',yAxisID:'y2',tension:0.4,pointRadius:5,pointBackgroundColor:'#f5a623'}
+    ]
+  },options:{...CD,plugins:LEG,scales:{
+    x:{...CD.scales.x},
+    y:{...CD.scales.y,position:'left'},
+    y2:{...CD.scales.y,position:'right',grid:{drawOnChartArea:false},max:100}
+  }}})
+}
+
+function updateKPIs(m){
+  const set=(id,val,pre='',suf='')=>document.getElementById(id).textContent=val!=null?pre+Number(val).toLocaleString()+suf:'--';
+  set('kpi-rev',m.revenue,'$');set('kpi-ord',m.orders,'','');set('kpi-cvr',m.conversionRate,'','%');set('kpi-aov',m.avgOrderValue,'$');
+  const setD=(id,val,bench,pre='',suf='')=>{
+    const el=document.getElementById(id);
+    if(val==null){el.innerHTML='no data';return}
+    const g=val>=bench;
+    el.innerHTML=`<span class="${g?'dup':'ddn'}">${g?'▲':'▼'} ${pre}${Number(val).toLocaleString()}${suf} vs ${pre}${bench}${suf} benchmark</span>`
+  };
+  setD('kpi-rev-d',m.revenue,100000,'$');setD('kpi-ord-d',m.orders,800,'','');setD('kpi-cvr-d',m.conversionRate,2.5,'','%');setD('kpi-aov-d',m.avgOrderValue,85,'$')
+}
+
+function renderRecs(recs){
+  currentRecs=recs;
+  const cont=document.getElementById('recsContainer'),fb=document.getElementById('filterBar'),meta=document.getElementById('recs-meta');
+  if(!recs||!recs.length){
+    fb.style.display='none';
+    cont.innerHTML=`<div class="recs-empty"><div class="recs-empty-title">No signals detected</div><div class="recs-empty-sub">Your data did not trigger any rules. Try the demo dataset.</div></div>`;return
   }
- 
-  // Rule 4: High margin + low sales → Promotion opportunity
-  products.forEach(p => {
-    if (p.margin > 45 && p.sales < 40) {
-      recs.push({
-        type: 'promo',
-        impact: 'medium',
-        title: promoTitle(strategy, p),
-        reason: `${p.name} carries a ${p.margin}% margin but generates only ${p.sales} monthly units. This is an underutilized high-value asset.`,
-        action: promoAction(strategy, p),
-        product: p.name
-      });
-    }
-  });
- 
-  // Rule 5: Low margin products → Margin improvement
-  products.forEach(p => {
-    if (p.margin < 20 && p.sales > 60) {
-      recs.push({
-        type: 'margin',
-        impact: p.margin < 12 ? 'high' : 'medium',
-        title: marginTitle(strategy, p),
-        reason: `${p.name} drives ${p.sales} units of volume but at only ${p.margin}% margin. High velocity at thin margins creates cash flow fragility.`,
-        action: marginAction(strategy, p),
-        product: p.name
-      });
-    }
-  });
- 
-  // Rule 6: Low AOV → Upsell opportunity
-  if (metrics.avgOrderValue < 80) {
-    recs.push({
-      type: 'upsell',
-      impact: 'medium',
-      title: upsellTitle(strategy, metrics),
-      reason: `Average order value of $${metrics.avgOrderValue} indicates limited cross-sell or bundle adoption. Each incremental AOV dollar flows directly to revenue at no acquisition cost.`,
-      action: upsellAction(strategy, metrics)
-    });
-  }
- 
-  // Rule 7: Revenue concentration risk
-  const totalSales = products.reduce((s,p) => s + p.sales, 0);
-  products.forEach(p => {
-    const share = totalSales > 0 ? (p.sales / totalSales * 100).toFixed(1) : 0;
-    if (share > 55) {
-      recs.push({
-        type: 'concentration',
-        impact: 'high',
-        title: 'Revenue Concentration Risk',
-        reason: `${p.name} accounts for ${share}% of total unit volume. Single-SKU dependency creates significant operational and demand risk.`,
-        action: concentrationAction(strategy, p, share)
-      });
-    }
-  });
- 
-  // Rule 8: High AOV + low orders → pricing opportunity
-  if (metrics.avgOrderValue > 200 && metrics.orders < 500) {
-    recs.push({
-      type: 'aov',
-      impact: 'low',
-      title: aovTitle(strategy, metrics),
-      reason: `High AOV of $${metrics.avgOrderValue} with ${metrics.orders} orders suggests a premium positioning that may be limiting addressable volume.`,
-      action: aovAction(strategy, metrics)
-    });
-  }
- 
-  // Filter suppressed types
-  const suppressed = cfg.suppressTypes || [];
-  const filtered = recs.filter(r => !suppressed.includes(r.type));
- 
-  // Sort by strategy priority order
-  filtered.sort((a, b) => {
-    const ai = cfg.priorityOrder.indexOf(a.type);
-    const bi = cfg.priorityOrder.indexOf(b.type);
-    const ap = ai === -1 ? 99 : ai;
-    const bp = bi === -1 ? 99 : bi;
-    if (ap !== bp) return ap - bp;
-    const impactRank = { high: 0, medium: 1, low: 2 };
-    return impactRank[a.impact] - impactRank[b.impact];
-  });
- 
-  return filtered;
+  fb.style.display='flex';
+  const high=recs.filter(r=>r.impact==='high').length,med=recs.filter(r=>r.impact==='medium').length;
+  meta.textContent=`${recs.length} signals — ${high} high, ${med} medium`;
+  renderFiltered(recs,activeFilter)
 }
- 
-/* ─── STRATEGY-AWARE COPY ─── */
-function stockoutTitle(s, p) {
-  if (s === 'profit_max') return `Protect ${p.name} Revenue Stream`;
-  if (s === 'inventory') return `Critical Restock: ${p.name}`;
-  if (s === 'revenue_max') return `Unlock ${p.name} Growth Capacity`;
-  return `Restock ${p.name} to Prevent Lost Sales`;
-}
-function restockAction(s, p) {
-  if (s === 'profit_max') return `Negotiate a premium bulk reorder for ${p.name} — secure 90-day supply at a favorable unit cost to protect margin on a high-demand SKU.`;
-  if (s === 'inventory') return `Issue an emergency purchase order for ${p.name}. Target minimum 60-day safety stock. Expedite freight if necessary.`;
-  if (s === 'revenue_max') return `Maximize reorder quantity for ${p.name} to capture full demand. Consider pre-selling while stock is inbound to maintain conversion momentum.`;
-  return `Initiate a reorder for ${p.name} with a 60-day supply buffer. Monitor weekly velocity and set automated reorder triggers at the 20-unit threshold.`;
-}
- 
-function discountTitle(s, p) {
-  if (s === 'inventory') return `Liquidate Excess ${p.name} Inventory`;
-  if (s === 'revenue_max') return `Deploy ${p.name} as Traffic Driver`;
-  if (s === 'profit_max') return `Evaluate ${p.name} SKU Performance`;
-  return `Reduce ${p.name} Overstock Through Targeted Promotion`;
-}
-function discountAction(s, p) {
-  if (s === 'inventory') return `Apply a 20–30% markdown on ${p.name} immediately. Bundle with a complementary SKU to move volume while minimizing margin erosion.`;
-  if (s === 'revenue_max') return `Price ${p.name} competitively to drive traffic and acquisition. Use excess stock as a loss-leader to increase basket size on other products.`;
-  if (s === 'profit_max') return `Rather than discounting, evaluate whether ${p.name} should remain in the catalog. If retained, test demand via limited-time bundling before committing to a price reduction.`;
-  return `Run a time-limited 15–20% promotion on ${p.name} to reduce stock to a 4-week supply. Avoid deep cuts — maintain positioning with a bundle or "value add" framing.`;
-}
- 
-function funnelTitle(s, m) {
-  if (s === 'revenue_max') return `Conversion Rate Is Your Largest Revenue Lever`;
-  if (s === 'profit_max') return `Improve Funnel Quality, Not Just Volume`;
-  if (s === 'inventory') return `Fix Conversion Before Driving More Traffic`;
-  return `Address Conversion Rate Underperformance`;
-}
-function funnelAction(s, m) {
-  if (s === 'revenue_max') return `Prioritize conversion rate optimization above all other initiatives. A 1% CVR lift at your traffic volume represents a direct revenue multiplier. A/B test checkout flow, product pages, and CTAs this week.`;
-  if (s === 'profit_max') return `Identify which traffic segments convert best and reallocate ad spend toward those cohorts. Audit checkout friction points and remove low-intent offers that attract poor-margin buyers.`;
-  if (s === 'inventory') return `Resolve funnel friction before investing in inventory. Conversion issues upstream mean excess stock problems downstream. Audit cart abandonment and product page clarity.`;
-  return `Audit the full conversion funnel: product page → cart → checkout. Identify drop-off points using session data. Prioritize mobile checkout UX, trust signals, and page load performance.`;
-}
- 
-function promoTitle(s, p) {
-  if (s === 'profit_max') return `Activate High-Margin ${p.name} with Targeted Campaign`;
-  if (s === 'revenue_max') return `Scale ${p.name} Volume to Match Its Margin`;
-  return `Promote ${p.name} — High Margin, Underperforming Volume`;
-}
-function promoAction(s, p) {
-  if (s === 'profit_max') return `Invest in a focused paid campaign for ${p.name} — at ${p.margin}% margin, each additional sale delivers strong contribution. Keep CAC below $${(p.margin * 0.4).toFixed(0)} to maintain profitability.`;
-  if (s === 'revenue_max') return `Run an aggressive promotional campaign for ${p.name} to unlock its volume potential. A moderate promotional investment will be ROI-positive given the ${p.margin}% margin buffer.`;
-  return `Allocate a test budget to promote ${p.name} via email and paid channels. At ${p.margin}% margin, there is room to invest in demand generation without compromising unit economics.`;
-}
- 
-function marginTitle(s, p) {
-  if (s === 'profit_max') return `${p.name} Margin Is Critically Thin — Immediate Action Required`;
-  if (s === 'revenue_max') return `Monitor ${p.name} Margin at Scale`;
-  return `Improve ${p.name} Margin or Reassess Viability`;
-}
-function marginAction(s, p) {
-  if (s === 'profit_max') return `Raise ${p.name} pricing by 8–12% and test demand elasticity. Simultaneously, renegotiate supplier terms or find a secondary source to reduce COGS. At ${p.margin}% margin, this product cannot sustain the business long-term.`;
-  if (s === 'revenue_max') return `Flag ${p.name} for quarterly margin review. In the short term, prioritize volume to achieve supplier volume discounts, then revisit margin structure.`;
-  return `Evaluate ${p.name} COGS — identify whether supplier negotiations, volume discounts, or a modest price increase ($5–10) can improve margin without volume loss.`;
-}
- 
-function upsellTitle(s, m) {
-  if (s === 'revenue_max') return `Lift AOV to Compound Revenue Without New Traffic`;
-  if (s === 'profit_max') return `Bundle Strategy to Improve Order Economics`;
-  return `Increase Average Order Value Through Cross-Sell`;
-}
-function upsellAction(s, m) {
-  if (s === 'revenue_max') return `Implement cart-level upsell prompts for products with complementary usage. A $15 AOV lift on ${m.orders} orders is worth $${(15 * m.orders).toLocaleString()} in revenue with zero acquisition cost.`;
-  if (s === 'profit_max') return `Design bundles that pair high-margin items with best-sellers. Bundles protect margin, increase perceived value, and improve AOV simultaneously.`;
-  return `Introduce post-cart upsell and frequently-bought-together recommendations. Target a 20% AOV lift within 60 days through systematic cross-sell placement.`;
-}
- 
-function concentrationAction(s, p, share) {
-  if (s === 'revenue_max') return `Accelerate the catalog expansion roadmap. Diversify into adjacent categories where ${p.name}'s customer base has demonstrated adjacent demand.`;
-  if (s === 'profit_max') return `Use ${p.name}'s margin to fund development or acquisition of 2–3 complementary SKUs. Reduce dependence below 40% within two quarters.`;
-  return `Prioritize catalog diversification. Set a target to reduce ${p.name}'s share from ${share}% to below 40% over the next two quarters via adjacency expansion.`;
-}
- 
-function aovTitle(s, m) {
-  if (s === 'profit_max') return `Premium Positioning Validated — Protect It`;
-  if (s === 'revenue_max') return `Expand Addressable Market Through Entry-Level Offering`;
-  return `Consider Volume Tier to Broaden Market Reach`;
-}
-function aovAction(s, m) {
-  if (s === 'profit_max') return `Maintain premium positioning and resist volume-led discounting. Focus on deepening value perception through content, packaging, and post-purchase experience.`;
-  if (s === 'revenue_max') return `Introduce an entry-level SKU or starter bundle at a lower price point to expand top-of-funnel volume and upsell over time.`;
-  return `Test a starter or introductory SKU to capture price-sensitive demand without cannibalizing the core offering. Monitor margin impact carefully.`;
-}
- 
-/* ─── UI RENDERING ─── */
-function renderRecs(recs) {
-  currentRecs = recs;
-  const container = document.getElementById('recsContainer');
-  const filterBar = document.getElementById('filterBar');
-  const meta = document.getElementById('recsMeta');
- 
-  if (!recs || recs.length === 0) {
-    filterBar.style.display = 'none';
-    container.innerHTML = `<div class="recs-empty">
-      <div class="recs-empty-title">No signals detected</div>
-      <div class="recs-empty-sub">Your data did not trigger any recommendation rules. Try the demo dataset for a full example.</div>
-    </div>`;
-    return;
-  }
- 
-  filterBar.style.display = 'flex';
-  const high = recs.filter(r => r.impact === 'high').length;
-  const medium = recs.filter(r => r.impact === 'medium').length;
-  meta.textContent = `${recs.length} signals — ${high} high, ${medium} medium`;
- 
-  renderFiltered(recs, activeFilter);
-}
- 
-function renderFiltered(recs, filter) {
-  const container = document.getElementById('recsContainer');
-  const filtered = filter === 'all' ? recs : recs.filter(r => r.impact === filter);
- 
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="recs-empty">
-      <div class="recs-empty-title">No ${filter}-impact signals</div>
-      <div class="recs-empty-sub">Try viewing all signals or adjusting your strategy.</div>
-    </div>`;
-    return;
-  }
- 
-  const cards = filtered.map((r, i) => {
-    const featured = i === 0;
-    const delay = i * 0.06;
-    const impactClass = r.impact;
- 
-    if (featured) {
-      return `<div class="rec-card featured impact-${impactClass}" style="animation-delay:${delay}s">
-        <div class="rec-content">
-          <div class="rec-card-top">
-            <span class="rec-impact ${impactClass}"><span class="rec-impact-dot"></span>${r.impact.toUpperCase()} IMPACT</span>
-            <span class="rec-priority">PRIORITY 01</span>
-          </div>
-          <div class="rec-title">${r.title}</div>
-          <div class="rec-reason">${r.reason}</div>
-        </div>
-        <div class="rec-action-block">
-          <div class="rec-action-label">Recommended Action</div>
-          <div class="rec-action">${r.action}</div>
-        </div>
-      </div>`;
-    }
- 
-    return `<div class="rec-card impact-${impactClass}" style="animation-delay:${delay}s">
-      <div class="rec-card-top">
-        <span class="rec-impact ${impactClass}"><span class="rec-impact-dot"></span>${r.impact.toUpperCase()} IMPACT</span>
-        <span class="rec-priority">PRIORITY ${String(i+1).padStart(2,'0')}</span>
+function renderFiltered(recs,filter){
+  const cont=document.getElementById('recsContainer');
+  const f=filter==='all'?recs:recs.filter(r=>r.impact===filter);
+  if(!f.length){cont.innerHTML=`<div class="recs-empty"><div class="recs-empty-title">No ${filter}-impact signals</div><div class="recs-empty-sub">Try viewing all signals.</div></div>`;return}
+  const cards=f.map((r,i)=>{
+    const delay=i*0.055,imp=r.impact;
+    if(i===0)return`<div class="rec-card featured impact-${imp}" style="animation-delay:${delay}s">
+      <div>
+        <div class="rct"><span class="rimp ${imp}"><span class="rimp-dot"></span>${imp.toUpperCase()} IMPACT</span><span class="rpri">PRIORITY 01</span></div>
+        <div class="rtitle">${r.title}</div><div class="rreason">${r.reason}</div>
       </div>
-      <div class="rec-title">${r.title}</div>
-      <div class="rec-reason">${r.reason}</div>
-      <div class="rec-divider"></div>
-      <div class="rec-action-label">Recommended Action</div>
-      <div class="rec-action">${r.action}</div>
+      <div class="rab"><div class="ralabel">Recommended Action</div><div class="raction">${r.action}</div></div>
     </div>`;
+    return`<div class="rec-card impact-${imp}" style="animation-delay:${delay}s">
+      <div class="rct"><span class="rimp ${imp}"><span class="rimp-dot"></span>${imp.toUpperCase()} IMPACT</span><span class="rpri">PRIORITY ${String(i+1).padStart(2,'0')}</span></div>
+      <div class="rtitle">${r.title}</div><div class="rreason">${r.reason}</div>
+      <div class="rdiv"></div><div class="ralabel">Recommended Action</div><div class="raction">${r.action}</div>
+    </div>`
   }).join('');
- 
-  container.innerHTML = `<div class="recs-grid">${cards}</div>`;
+  cont.innerHTML=`<div class="recs-grid">${cards}</div>`
 }
- 
-function filterRecs(filter, btn) {
-  activeFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderFiltered(currentRecs, filter);
+function filterRecs(filter,btn){
+  activeFilter=filter;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');renderFiltered(currentRecs,filter)
 }
- 
-/* ─── KPI UPDATE ─── */
-function updateKPIs(metrics) {
-  const fmt = (v, prefix='', suffix='') => v != null ? `${prefix}${Number(v).toLocaleString()}${suffix}` : '--';
- 
-  document.getElementById('kpi-revenue').textContent = metrics.revenue ? '$' + Number(metrics.revenue).toLocaleString() : '--';
-  document.getElementById('kpi-orders').textContent  = metrics.orders ? Number(metrics.orders).toLocaleString() : '--';
-  document.getElementById('kpi-cvr').textContent     = metrics.conversionRate ? metrics.conversionRate + '%' : '--';
-  document.getElementById('kpi-aov').textContent     = metrics.avgOrderValue ? '$' + metrics.avgOrderValue : '--';
- 
-  const setDelta = (id, val, benchmark, prefix='', suffix='') => {
-    const el = document.getElementById(id);
-    if (val == null) { el.innerHTML = '<span class="delta-arrow">--</span> no data'; return; }
-    const isGood = val >= benchmark;
-    el.innerHTML = `<span class="delta-arrow ${isGood?'delta-up':'delta-down'}">${isGood?'▲':'▼'}</span>
-      <span class="${isGood?'delta-up':'delta-down'}">${prefix}${Number(val).toLocaleString()}${suffix} vs ${prefix}${benchmark}${suffix} benchmark</span>`;
-  };
- 
-  setDelta('kpi-revenue-d', metrics.revenue, 100000, '$');
-  setDelta('kpi-orders-d', metrics.orders, 800, '', ' orders');
-  setDelta('kpi-cvr-d', metrics.conversionRate, 2.5, '', '%');
-  setDelta('kpi-aov-d', metrics.avgOrderValue, 85, '$');
+function setStatus(state,msg){
+  document.getElementById('stext').textContent=msg;
+  document.getElementById('sdot').style.background=state==='active'?'var(--gr)':state==='error'?'var(--rd)':'var(--t3)'
 }
- 
-/* ─── STRATEGY SWITCH ─── */
-function setStrategy(strategy, btn) {
-  currentStrategy = strategy;
-  document.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('statusStrategy').textContent = STRATEGIES[strategy].label;
- 
-  if (currentData) {
-    runAnalysis(true);
+function runAnalysis(rerun=false){
+  let data=currentData;
+  if(!rerun){
+    const tab=document.querySelector('.dtab.active').textContent.trim();
+    if(tab==='Manual Entry')data=getManualData();
+    else if(tab==='JSON Import'){try{data=JSON.parse(document.getElementById('jsonInput').value.trim())}catch(e){setStatus('error','Invalid JSON format.');return}}
+    if(!data||(!data.metrics&&!data.products?.length)){setStatus('error','No data found. Add metrics or products first.');return}
+    if(!data.metrics)data.metrics={};if(!data.products)data.products=[];currentData=data
   }
+  updateKPIs(currentData.metrics);buildCharts(currentData);
+  const recs=analyzeData(currentData,currentStrategy);renderRecs(recs);
+  const label=STRATS[currentStrategy].label;
+  setStatus('active',`Analysis complete — ${recs.length} recommendations generated under ${label} strategy.`);
+  document.getElementById('sstrat').textContent=label;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('p2').classList.add('active');
+  document.querySelectorAll('.nav-tab')[1].classList.add('active')
 }
- 
-/* ─── TAB SWITCH ─── */
-function switchTab(name, btn) {
-  document.querySelectorAll('.data-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-}
- 
-/* ─── PRODUCT TABLE ─── */
-function addProductRow(name='', sales='', stock='', margin='') {
-  const tbody = document.getElementById('productTableBody');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><input type="text" value="${name}" placeholder="Product name" /></td>
-    <td><input type="number" value="${sales}" placeholder="0" /></td>
-    <td><input type="number" value="${stock}" placeholder="0" /></td>
-    <td><input type="number" value="${margin}" placeholder="0" step="0.1" /></td>
-  `;
-  tbody.appendChild(tr);
-}
- 
-function getManualData() {
-  const metrics = {
-    revenue: parseFloat(document.getElementById('m-revenue').value) || null,
-    orders: parseInt(document.getElementById('m-orders').value) || null,
-    conversionRate: parseFloat(document.getElementById('m-cvr').value) || null,
-    avgOrderValue: parseFloat(document.getElementById('m-aov').value) || null
-  };
- 
-  const products = [];
-  document.querySelectorAll('#productTableBody tr').forEach(row => {
-    const inputs = row.querySelectorAll('input');
-    const name = inputs[0].value.trim();
-    if (!name) return;
-    products.push({
-      name,
-      sales: parseFloat(inputs[1].value) || 0,
-      stock: parseFloat(inputs[2].value) || 0,
-      margin: parseFloat(inputs[3].value) || 0
-    });
-  });
- 
-  return { metrics, products };
-}
- 
-/* ─── ANALYSIS ─── */
-function runAnalysis(rerun = false) {
-  let data = currentData;
- 
-  if (!rerun) {
-    const activeTab = document.querySelector('.data-tab.active').textContent.trim();
- 
-    if (activeTab === 'Manual Input') {
-      data = getManualData();
-    } else if (activeTab === 'JSON') {
-      try {
-        const raw = document.getElementById('jsonInput').value.trim();
-        data = JSON.parse(raw);
-      } catch(e) {
-        setStatus('error', 'Invalid JSON — please check your format.');
-        return;
-      }
-    }
- 
-    if (!data || (!data.metrics && !data.products?.length)) {
-      setStatus('error', 'No data detected. Add metrics or product data first.');
-      return;
-    }
- 
-    if (!data.metrics) data.metrics = {};
-    if (!data.products) data.products = [];
- 
-    currentData = data;
-  }
- 
-  updateKPIs(currentData.metrics);
- 
-  const recs = analyzeData(currentData, currentStrategy);
-  renderRecs(recs);
- 
-  const label = STRATEGIES[currentStrategy].label;
-  setStatus('active', `Analysis complete — ${recs.length} recommendations generated under ${label} strategy.`);
-}
- 
-function setStatus(state, msg) {
-  document.getElementById('statusText').textContent = msg;
-  const dot = document.getElementById('statusDot');
-  dot.className = 'status-dot ' + (state === 'active' ? '' : state === 'error' ? 'error' : 'idle');
-  if (state === 'error') dot.style.background = 'var(--red)';
-  else if (state === 'active') dot.style.background = 'var(--green)';
-  else dot.style.background = 'var(--text-3)';
-}
- 
-/* ─── DEMO MODE ─── */
-function runDemo() {
-  const demoData = {
-    metrics: {
-      revenue: 142500,
-      orders: 1240,
-      conversionRate: 1.8,
-      avgOrderValue: 115
-    },
-    products: [
-      { name: 'Wireless Pro Headphones', sales: 420, stock: 8, margin: 52 },
-      { name: 'USB-C Hub Elite',         sales: 28, stock: 215, margin: 18 },
-      { name: 'Portable Charger 20K',    sales: 310, stock: 6, margin: 38 },
-      { name: 'Desk Cable Organizer',    sales: 12, stock: 180, margin: 60 },
-      { name: 'Smart LED Strip (2m)',    sales: 95, stock: 44, margin: 42 }
+function runDemo(){
+  const demo={
+    metrics:{revenue:142500,orders:1240,conversionRate:1.8,avgOrderValue:115,sessionDuration:2.8,bounceRate:64,repeatPurchaseRate:18,cartAbandonment:72,monthlyUnits:3840,weeklyGrowth:3.2,refundRate:4.1,newCustomerRatio:71,totalSKUs:32,daysOfStock:38,stockoutEvents:4,overstockSKUs:6},
+    products:[
+      {name:'Wireless Pro Headphones',price:89,sales:420,stock:8,margin:52,rating:4.7},
+      {name:'USB-C Hub Elite',price:49,sales:28,stock:215,margin:18,rating:4.1},
+      {name:'Portable Charger 20K',price:65,sales:310,stock:6,margin:38,rating:4.5},
+      {name:'Desk Cable Organizer',price:22,sales:12,stock:180,margin:60,rating:3.4},
+      {name:'Smart LED Strip 2m',price:34,sales:95,stock:44,margin:42,rating:4.3}
     ]
   };
- 
-  // Populate manual tab
-  document.getElementById('m-revenue').value = demoData.metrics.revenue;
-  document.getElementById('m-orders').value = demoData.metrics.orders;
-  document.getElementById('m-cvr').value = demoData.metrics.conversionRate;
-  document.getElementById('m-aov').value = demoData.metrics.avgOrderValue;
- 
-  document.getElementById('productTableBody').innerHTML = '';
-  demoData.products.forEach(p => addProductRow(p.name, p.sales, p.stock, p.margin));
- 
-  // Switch to manual tab
-  document.querySelectorAll('.data-tab')[0].click();
- 
-  currentData = demoData;
-  updateKPIs(demoData.metrics);
- 
-  const recs = analyzeData(demoData, currentStrategy);
-  renderRecs(recs);
- 
-  const label = STRATEGIES[currentStrategy].label;
-  setStatus('active', `Demo loaded — ${recs.length} recommendations under ${label} strategy.`);
+  const fields={'m-revenue':demo.metrics.revenue,'m-orders':demo.metrics.orders,'m-cvr':demo.metrics.conversionRate,'m-aov':demo.metrics.avgOrderValue,'m-session':demo.metrics.sessionDuration,'m-bounce':demo.metrics.bounceRate,'m-repeat':demo.metrics.repeatPurchaseRate,'m-abandon':demo.metrics.cartAbandonment,'m-units':demo.metrics.monthlyUnits,'m-growth':demo.metrics.weeklyGrowth,'m-refund':demo.metrics.refundRate,'m-newcust':demo.metrics.newCustomerRatio,'m-skus':demo.metrics.totalSKUs,'m-daysstock':demo.metrics.daysOfStock,'m-stockouts':demo.metrics.stockoutEvents,'m-overstock':demo.metrics.overstockSKUs};
+  Object.entries(fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});
+  document.getElementById('ptbody').innerHTML='';
+  demo.products.forEach(p=>addRow(p.name,p.price,p.sales,p.stock,p.margin,p.rating));
+  document.querySelectorAll('.dtab')[0].click();currentData=demo;runAnalysis(true)
 }
- 
-/* ─── CLEAR ─── */
-function clearAll() {
-  ['m-revenue','m-orders','m-cvr','m-aov'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('productTableBody').innerHTML = '';
-  document.getElementById('jsonInput').value = '';
-  document.getElementById('csvStatus').textContent = '';
-  currentData = null;
-  currentRecs = [];
-  updateKPIs({});
-  document.getElementById('filterBar').style.display = 'none';
-  document.getElementById('recsMeta').textContent = '';
-  document.getElementById('recsContainer').innerHTML = `<div class="recs-empty">
-    <div class="recs-empty-title">No analysis results yet</div>
-    <div class="recs-empty-sub">Enter your business data above and click Run Analysis, or use the demo dataset.</div>
-  </div>`;
-  setStatus('idle', 'Ready to analyze. Load data and select a strategy.');
+function clearAll(){
+  ['m-revenue','m-orders','m-cvr','m-aov','m-session','m-bounce','m-repeat','m-abandon','m-units','m-growth','m-refund','m-newcust','m-skus','m-daysstock','m-stockouts','m-overstock'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('ptbody').innerHTML='';document.getElementById('jsonInput').value='';document.getElementById('csvStatus').textContent='';
+  currentData=null;currentRecs=[];updateKPIs({});document.getElementById('filterBar').style.display='none';
+  document.getElementById('recs-meta').textContent='';
+  document.getElementById('recsContainer').innerHTML=`<div class="recs-empty"><div class="recs-empty-title">No results yet</div><div class="recs-empty-sub">Load your data on the input page and run analysis.</div></div>`;
+  setStatus('idle','Ready to analyze. Load data and select a strategy.')
 }
- 
-/* ─── CSV ─── */
-function handleDragOver(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.add('drag-over');
-}
-function handleDragLeave(e) {
-  document.getElementById('uploadZone').classList.remove('drag-over');
-}
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processCSV(file);
-}
-function handleCSVFile(e) {
-  const file = e.target.files[0];
-  if (file) processCSV(file);
-}
- 
-function processCSV(file) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
- 
-    const products = [];
-    for (let i = 1; i < lines.length; i++) {
-      const vals = lines[i].split(',');
-      const row = {};
-      headers.forEach((h, j) => row[h] = vals[j]?.trim());
-      if (row.name || row.product) {
-        products.push({
-          name: row.name || row.product || `Product ${i}`,
-          sales: parseFloat(row.sales || row.units_sold || row.volume) || 0,
-          stock: parseFloat(row.stock || row.inventory || row.units_in_stock) || 0,
-          margin: parseFloat(row.margin || row.margin_pct || row.profit_margin) || 0
-        });
-      }
+function handleDragOver(e){e.preventDefault();document.getElementById('uploadZone').classList.add('drag-over')}
+function handleDragLeave(){document.getElementById('uploadZone').classList.remove('drag-over')}
+function handleDrop(e){e.preventDefault();document.getElementById('uploadZone').classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)processCSV(f)}
+function handleCSVFile(e){const f=e.target.files[0];if(f)processCSV(f)}
+function processCSV(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const lines=e.target.result.trim().split('\n');
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase());
+    const products=[];
+    for(let i=1;i<lines.length;i++){
+      const vals=lines[i].split(',');const row={};headers.forEach((h,j)=>row[h]=vals[j]?.trim());
+      if(row.name||row.product){products.push({name:row.name||row.product||`Product ${i}`,price:parseFloat(row.price||row.unit_price)||0,sales:parseFloat(row.sales||row.units_sold)||0,stock:parseFloat(row.stock||row.inventory)||0,margin:parseFloat(row.margin||row.margin_pct)||0,rating:parseFloat(row.rating||row.customer_rating)||0})}
     }
- 
-    currentData = currentData || { metrics: {} };
-    currentData.products = products;
-    document.getElementById('csvStatus').textContent = `Loaded ${products.length} products from ${file.name}`;
-  };
-  reader.readAsText(file);
+    currentData=currentData||{metrics:{}};currentData.products=products;
+    document.getElementById('csvStatus').textContent=`Loaded ${products.length} products from ${file.name}`;
+    document.getElementById('ptbody').innerHTML='';products.forEach(p=>addRow(p.name,p.price,p.sales,p.stock,p.margin,p.rating))
+  };reader.readAsText(file)
 }
- 
-/* ─── INIT ─── */
-addProductRow();
-addProductRow();
-addProductRow();
+addRow();addRow();addRow();
 </script>
 </body>
 </html>
